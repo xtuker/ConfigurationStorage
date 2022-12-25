@@ -9,22 +9,6 @@
         /// <summary>
         /// Использовать EF Core db context
         /// </summary>
-        /// <param name="storageSource">Источник конфигурации</param>
-        /// <param name="builderConfigurator">Метод создания контекста <see cref="DbContext"/></param>
-        public static ConfigurationStorageSource UseEfCoreDefaultStorage(this ConfigurationStorageSource storageSource, Action<DbContextOptionsBuilder> builderConfigurator)
-        {
-            var options = new DbContextOptionsBuilder<DefaultConfigurationDataDbContext>();
-            
-            builderConfigurator(options);
-
-            storageSource.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, ConfigurationData>(new DefaultConfigurationDataDbContext(options.Options)));
-
-            return storageSource;
-        }
-        
-        /// <summary>
-        /// Использовать EF Core db context
-        /// </summary>
         public static ConfigurationStorageSource UseEfCoreDefaultStorage(this ConfigurationStorageSource storageSource,
             Action<DbContextOptionsBuilder> builderConfigurator,
             string tableName,

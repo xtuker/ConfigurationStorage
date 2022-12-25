@@ -16,11 +16,8 @@
             {
                 extension = extension.WithSchemaName(schemaName);
             }
-
-            if (configurator != null)
-            {
-                configurator(extension);
-            }
+            
+            configurator?.Invoke(extension);
 
             ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
 

@@ -12,6 +12,7 @@
 
         protected virtual string KeyColumnName { get; } = "Key";
         protected virtual string ValueColumnName { get; } = "Value";
+        protected virtual string EncryptedColumnName { get; } = "Encrypted";
 
         protected BaseConfigurationDataMapping(string tableName, string? schemaName = null)
         {
@@ -30,6 +31,7 @@
 
             builder.Property(x => x.Key).HasColumnName(KeyColumnName).IsRequired();
             builder.Property(x => x.Value).HasColumnName(ValueColumnName);
+            builder.Property(x => x.Encrypted).HasColumnName(EncryptedColumnName).IsRequired();
 
             ConfigureOther(builder);
         }
