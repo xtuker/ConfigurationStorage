@@ -1,0 +1,34 @@
+<Project>
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        
+        <VersionPrefix>1.0.0</VersionPrefix>
+        <VersionSuffix>preview.2</VersionSuffix>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+        <AnalysisLevel>latest</AnalysisLevel>
+        <Authors>Alexander Falkovsky</Authors>
+        <Company>Xtuker</Company>
+        <PackageProjectUrl>https://github.com/xtuker/xtuker.configurationstorage</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/xtuker/xtuker.configurationstorage</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryBranch>master</RepositoryBranch>
+        <Copyright>Copyright 2022 © Alexander Falkovsky</Copyright>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <OutputPath Condition="'$(OutputPath)'=='' ">$(SolutionDir).build</OutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

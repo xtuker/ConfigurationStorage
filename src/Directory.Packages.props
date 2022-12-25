@@ -1,0 +1,16 @@
+<Project>
+    <PropertyGroup>
+        <MicrosoftExtensionsVersion>6.0.0</MicrosoftExtensionsVersion>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsVersion)" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(MicrosoftExtensionsVersion)" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(MicrosoftExtensionsVersion)" />
+        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftExtensionsVersion)" />
+
+        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(MicrosoftExtensionsVersion)" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="$(MicrosoftExtensionsVersion)" />
+        
+        <PackageVersion Include="Dapper" Version="2.0.123" />
+    </ItemGroup>
+</Project>

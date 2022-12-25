@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>dotnet-TestWorker-808A5121-16B9-41E4-BA6B-044AC8989C2F</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Dapper" Version="2.0.123" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Xtuker.ConfigurationStorage.Dapper\Xtuker.ConfigurationStorage.Dapper.csproj" />
+      <ProjectReference Include="..\..\src\Xtuker.ConfigurationStorage.EntityFramework\Xtuker.ConfigurationStorage.EntityFramework.csproj" />
+      <ProjectReference Include="..\..\src\Xtuker.ConfigurationStorage\Xtuker.ConfigurationStorage.csproj" />
+    </ItemGroup>
+</Project>

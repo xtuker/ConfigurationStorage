@@ -1,0 +1,1 @@
+# ConfigurationStorage - the .NET database configuration provider

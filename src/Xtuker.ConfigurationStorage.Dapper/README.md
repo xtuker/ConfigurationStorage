@@ -1,0 +1,1 @@
+﻿## ConfigurationStorage.Dapper - the .NET database configuration provider via Dapper

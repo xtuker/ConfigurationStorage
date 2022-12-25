@@ -1,0 +1,1 @@
+﻿## ConfigurationStorage.EntityFramework - the .NET database configuration provider via Entity Framework Core
