@@ -1,16 +1,20 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>dotnet-TestWorker-808A5121-16B9-41E4-BA6B-044AC8989C2F</UserSecretsId>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Dapper" Version="2.0.123" />
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
+        <PackageReference Include="NUnit" Version="3.13.3"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="4.2.1"/>
+        <PackageReference Include="NUnit.Analyzers" Version="3.6.1"/>
+        <PackageReference Include="coverlet.collector" Version="6.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -18,4 +22,5 @@
       <ProjectReference Include="..\..\src\Xtuker.ConfigurationStorage.EntityFramework\Xtuker.ConfigurationStorage.EntityFramework.csproj" />
       <ProjectReference Include="..\..\src\Xtuker.ConfigurationStorage\Xtuker.ConfigurationStorage.csproj" />
     </ItemGroup>
+
 </Project>

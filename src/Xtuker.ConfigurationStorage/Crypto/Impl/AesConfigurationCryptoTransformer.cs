@@ -13,10 +13,7 @@ namespace Xtuker.ConfigurationStorage.Crypto
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         [EditorBrowsable(EditorBrowsableState.Never)]
         private readonly byte[] _key;
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        private readonly byte[]? _iv;
-        
+
         /// <summary>
         /// .ctor
         /// </summary>
@@ -26,11 +23,6 @@ namespace Xtuker.ConfigurationStorage.Crypto
             if (key.Length == 32)
             {
                 _key = key.ToArray();
-            }
-            else if (key.Length == 48)
-            {
-                _key = key.Slice(0, 32).ToArray();
-                _iv = key.Slice(32).ToArray();
             }
             else
             {
@@ -43,10 +35,8 @@ namespace Xtuker.ConfigurationStorage.Crypto
         {
             var aes = Aes.Create();
             aes.Key = _key;
-            if (_iv != null)
-            {
-                aes.IV = _iv;
-            }
+            aes.Mode = CipherMode.CBC;
+            aes.Padding = PaddingMode.PKCS7;
 
             return aes;
         }

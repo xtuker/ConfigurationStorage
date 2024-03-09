@@ -32,6 +32,11 @@ namespace Xtuker.ConfigurationStorage
         /// </summary>
         public IConfigurationStorageChangeNotifier? ChangeNotifier { get; internal set; }
 
+        /// <summary>
+        /// Интервал перезагрузки конфигурации
+        /// </summary>
+        public int ReloadInterval { get; internal set; }
+
         /// <inheritdoc />
         public virtual IConfigurationProvider Build(IConfigurationBuilder builder)
         {

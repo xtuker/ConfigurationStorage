@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         
         <Description>ConfigurationStorage.EntityFramework - the .NET database configuration provider via Entity Framework Core</Description>
         <PackageTags>extensions-configuration-storage;configuration;storage;efcore</PackageTags>

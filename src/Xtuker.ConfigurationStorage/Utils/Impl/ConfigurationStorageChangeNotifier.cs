@@ -9,7 +9,7 @@ namespace Xtuker.ConfigurationStorage
     /// </summary>
     internal sealed class ConfigurationStorageChangeNotifier : IConfigurationStorageChangeNotifier
     {
-        private readonly Timer _timer;
+        private readonly TimeSpan _refreshInterval;
         private volatile CancellationTokenSource? _cancellationTokenSource;
 
         /// <summary>
@@ -18,25 +18,24 @@ namespace Xtuker.ConfigurationStorage
         /// <param name="refreshInterval">Интервал изменений</param>
         public ConfigurationStorageChangeNotifier(TimeSpan refreshInterval)
         {
-            _timer = new Timer(Change, null, TimeSpan.Zero, refreshInterval);
+            _refreshInterval = refreshInterval;
         }
 
-        private void Change(object? state)
+        public void NotifyChange()
         {
             _cancellationTokenSource?.Cancel();
         }
 
-        /// <inheritdoc />
-        public IChangeToken NotifyChange()
+        public IChangeToken CreateChangeToken()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
-            return new CancellationChangeToken(_cancellationTokenSource.Token);
+            var previousToken = Interlocked.Exchange(ref _cancellationTokenSource, new CancellationTokenSource(_refreshInterval));
+            previousToken?.Dispose();
+            return new CancellationChangeToken(_cancellationTokenSource!.Token);
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            _timer?.Dispose();
             _cancellationTokenSource?.Dispose();
         }
     }

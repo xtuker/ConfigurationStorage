@@ -9,8 +9,13 @@
     public interface IConfigurationStorageChangeNotifier : IDisposable
     {
         /// <summary>
+        /// Уведомить об изменении
+        /// </summary>
+        void NotifyChange();
+
+        /// <summary>
         /// Получить токен изменения
         /// </summary>
-        IChangeToken NotifyChange();
+        IChangeToken CreateChangeToken();
     }
 }

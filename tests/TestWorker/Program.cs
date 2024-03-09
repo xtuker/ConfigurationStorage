@@ -26,7 +26,7 @@ IHost host = Host.CreateDefaultBuilder(args)
             (config, x) => x.UseAesCryptoTransformer(config).UseLoggerFactory(loggerFactory).ReloadOnExpiry())
 
         // Ef Storage
-        .AddEfCoreStorage<MyDbContext, ConfigurationCryptoData>(ops => new MyDbContext(ops.Options),
+        .AddEfCoreStorage<MyDbContext, ConfigurationData>(ops => new MyDbContext(ops.Options),
             (config, x) => x.UseNpgsql(config.GetConnectionString("Pg"))
                 .UseLoggerFactory(loggerFactory)
                 .EnableSensitiveDataLogging(),

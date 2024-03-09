@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xtuker.ConfigurationStorage
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xtuker.ConfigurationStorage.Dapper", "src\Xtuker.ConfigurationStorage.Dapper\Xtuker.ConfigurationStorage.Dapper.csproj", "{7691BE39-2BD6-4A3E-8C6A-BEDC57B7F930}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{45BEF3D5-A2DB-415A-B886-BCDBD4D333C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "tests\UnitTests\UnitTests.csproj", "{CE94C627-599C-48E3-8841-9570F163E5F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,9 +57,14 @@ Global
 		{7691BE39-2BD6-4A3E-8C6A-BEDC57B7F930}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7691BE39-2BD6-4A3E-8C6A-BEDC57B7F930}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7691BE39-2BD6-4A3E-8C6A-BEDC57B7F930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE94C627-599C-48E3-8841-9570F163E5F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE94C627-599C-48E3-8841-9570F163E5F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE94C627-599C-48E3-8841-9570F163E5F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE94C627-599C-48E3-8841-9570F163E5F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9A92FAF5-4340-4F97-B6F1-5C00D26BF244} = {B90F04E3-1254-4341-AEF1-C312A9DA468B}
 		{0498645E-78A0-4C0C-9FCB-A6E6D034BD82} = {6AA06D91-135D-4340-A61D-6D290F4A1AD7}
+		{CE94C627-599C-48E3-8841-9570F163E5F9} = {45BEF3D5-A2DB-415A-B886-BCDBD4D333C4}
 	EndGlobalSection
 EndGlobal

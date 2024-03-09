@@ -4,9 +4,9 @@
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
     using Xtuker.ConfigurationStorage;
 
-    public class MyConfigurationDataMapping : IEntityTypeConfiguration<ConfigurationCryptoData>
+    public class MyConfigurationDataMapping : IEntityTypeConfiguration<ConfigurationData>
     {
-        public void Configure(EntityTypeBuilder<ConfigurationCryptoData> builder)
+        public void Configure(EntityTypeBuilder<ConfigurationData> builder)
         {
             builder.ToTable("my_configuration");
             builder.HasIndex(x => x.Key).IsUnique();

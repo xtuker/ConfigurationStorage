@@ -1,7 +1,7 @@
 ﻿namespace Xtuker.ConfigurationStorage
 {
     /// <summary>
-    /// Конфигурация без шифрования
+    /// Конфигурация
     /// </summary>
     public class ConfigurationData : IConfigurationData
     {
@@ -12,6 +12,6 @@
         public string? Value { get; set; }
 
         /// <inheritdoc />
-        bool IConfigurationData.Encrypted => false;
+        public bool Encrypted { get; set; }
     }
 }

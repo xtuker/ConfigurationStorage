@@ -6,7 +6,7 @@
     using global::Dapper;
     using Xtuker.ConfigurationStorage.Crypto;
 
-    internal sealed class DapperConfigurationReadOnlyStorage : BaseConfigurationStorage<ConfigurationCryptoData>
+    internal sealed class DapperConfigurationReadOnlyStorage : BaseConfigurationStorage<ConfigurationData>
     {
         private readonly string _connectionString;
         private readonly string _sqlCommand;
@@ -26,15 +26,15 @@
                 ?? throw new ArgumentNullException(nameof(connectionFactory), "Не задана метод создания соединения с базой данных");
         }
 
-        protected override void SetDataInternal(ConfigurationCryptoData config)
+        protected override void SetDataInternal(ConfigurationData config)
         {
             throw new NotSupportedException($"{nameof(DapperConfigurationReadOnlyStorage)} не поддержиает сохранение данных");
         }
 
-        protected override IEnumerable<ConfigurationCryptoData> GetDataInternal()
+        protected override IEnumerable<ConfigurationData> GetDataInternal()
         {
             using var connection = _connectionFactory(_connectionString);
-            return connection.Query<ConfigurationCryptoData>(_sqlCommand);
+            return connection.Query<ConfigurationData>(_sqlCommand);
         }
     }
 }

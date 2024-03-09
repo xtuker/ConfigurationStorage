@@ -25,7 +25,7 @@ namespace Xtuker.ConfigurationStorage
         /// </summary>
         public IConfigurationStorage Storage { get; }
 
-        private readonly IDictionary<string, string> _emptyData = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>());
+        private readonly IDictionary<string, string?> _emptyData = new ReadOnlyDictionary<string, string?>(new Dictionary<string, string?>());
 
         /// <inheritdoc />
         public ConfigurationStorageProvider(ConfigurationStorageSource storageSource)
@@ -35,13 +35,18 @@ namespace Xtuker.ConfigurationStorage
 
             if (storageSource.ChangeNotifier != null)
             {
-                _changeNotifier = storageSource.ChangeNotifier;
-                _changeTokenRegistration = ChangeToken.OnChange(() => _changeNotifier.NotifyChange(), Load);
+                _changeNotifier = new ConfigurationStorageChangeNotifier(TimeSpan.FromSeconds(storageSource.ReloadInterval));
+                _changeTokenRegistration = ChangeToken.OnChange(() => _changeNotifier.CreateChangeToken(), Load);
             }
         }
 
+        public void Reload()
+        {
+            _changeNotifier?.NotifyChange();
+        }
+
         /// <inheritdoc />
-        public override void Set(string key, string value)
+        public override void Set(string key, string? value)
         {
             // NOT SUPPORTED SAVE FROM CONFIGURATION PROVIDER
         }
@@ -49,11 +54,12 @@ namespace Xtuker.ConfigurationStorage
         /// <inheritdoc />
         public override void Load()
         {
+            _logger?.LogInformation("Configuration loading...");
             try
             {
                 if (Monitor.TryEnter(_locker))
                 {
-                    var data = GetData();
+                    var data = Storage.GetData();
                     Data = data.Where(x => !string.IsNullOrEmpty(x?.Key))
                         .ToDictionary(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
 
@@ -63,17 +69,15 @@ namespace Xtuker.ConfigurationStorage
             catch(Exception e)
             {
                 Data = _emptyData;
-                _logger?.LogWarning(e, "Update configuration error");
+                _logger?.LogError(e, "Load configuration error");
             }
             finally
             {
-                if (Monitor.IsEntered(_locker)) Monitor.Exit(_locker);
+                if (Monitor.IsEntered(_locker))
+                {
+                    Monitor.Exit(_locker);
+                }
             }
-        }
-
-        private IEnumerable<IConfigurationData> GetData()
-        {
-            return Storage.GetData();
         }
 
         /// <inheritdoc />

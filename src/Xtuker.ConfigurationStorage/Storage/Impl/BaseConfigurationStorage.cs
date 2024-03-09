@@ -34,7 +34,7 @@
         /// <inheritdoc />
         public virtual void SaveData(TConfig config)
         {
-            SetDataInternal(CryptoTransformer == null ? config : CryptoTransformer.TryEncrypt(config));
+            SetDataInternal(CryptoTransformer == null ? config : CryptoTransformer.Encrypt(config));
         }
 
         /// <inheritdoc />

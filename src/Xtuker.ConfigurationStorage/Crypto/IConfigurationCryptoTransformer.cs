@@ -12,30 +12,34 @@
         /// Зашифровать значение, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
         /// </summary>
         /// <param name="configurationData">Настройки</param>
+        /// <param name="silent">Не генерировать исключение</param>
         [return: NotNullIfNotNull(nameof(configurationData))]
-        public T? TryEncrypt<T>(T? configurationData)
+        public T? Encrypt<T>(T? configurationData, bool silent = true)
             where T : class, IConfigurationData;
 
         /// <summary>
         /// Расшифровать значение, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
         /// </summary>
         /// <param name="configurationData">Настройки</param>
+        /// <param name="silent">Не генерировать исключение</param>
         [return: NotNullIfNotNull(nameof(configurationData))]
-        public T? TryDecrypt<T>(T? configurationData)
+        public T? Decrypt<T>(T? configurationData, bool silent = true)
             where T : class, IConfigurationData;
         
         /// <summary>
         /// Зашифровать значения, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
         /// </summary>
         /// <param name="configurationDatas">Настройки</param>
-        public IEnumerable<T> Encrypt<T>(IEnumerable<T> configurationDatas)
+        /// <param name="silent">Не генерировать исключение</param>
+        public IEnumerable<T> Encrypt<T>(IEnumerable<T> configurationDatas, bool silent = true)
             where T : class, IConfigurationData;
         
         /// <summary>
         /// Расшифровать значения, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
         /// </summary>
         /// <param name="configurationDatas">Настройки</param>
-        public IEnumerable<T> Decrypt<T>(IEnumerable<T> configurationDatas)
+        /// <param name="silent">Не генерировать исключение</param>
+        public IEnumerable<T> Decrypt<T>(IEnumerable<T> configurationDatas, bool silent = true)
             where T : class, IConfigurationData;
     }
 }
