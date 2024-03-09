@@ -10,7 +10,7 @@
             {
                 Key = "Test:Value",
                 Value = $"Value from {nameof(InMemoryStorage)}",
-                //IsEncrypted = false
+                Encrypted = false
             }
         };
 

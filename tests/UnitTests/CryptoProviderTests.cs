@@ -26,8 +26,8 @@ public class Tests
         var encryptedData = CryptoTransformer.Encrypt(origData);
         Assert.That(encryptedData, Is.Not.Null);
         Assert.That(encryptedData.Value, Is.Not.EqualTo(srcText));
+        Print(encryptedData);
         var encValue = encryptedData.Value;
-        Console.WriteLine(encValue);
 
         var decryptedData = CryptoTransformer.Decrypt(encryptedData);
         Assert.That(decryptedData, Is.Not.Null);
@@ -36,7 +36,7 @@ public class Tests
         var encryptedData2 = CryptoTransformer.Encrypt(origData);
         Assert.That(encryptedData2, Is.Not.Null);
         Assert.That(encryptedData2.Value, Is.Not.EqualTo(encValue));
-        Console.WriteLine(encryptedData2.Value);
+        Print(encryptedData2);
 
         var decryptedData2 = CryptoTransformer.Decrypt(encryptedData2);
         Assert.That(decryptedData2, Is.Not.Null);
@@ -59,12 +59,21 @@ public class Tests
         Print(decryptedData);
     }
 
+    private void Print(IConfigurationData data)
+    {
+#if DEBUG
+        Console.WriteLine($"[{data.Key}]: {data.Value}");
+#endif
+    }
+
     private void Print(IEnumerable<IConfigurationData> data)
     {
+#if DEBUG
         foreach (var d in data)
         {
             Console.WriteLine($"[{d.Key}]: {d.Value}");
         }
+#endif
     }
 
     private IEnumerable<IConfigurationData> GenerateConfigData(int count)

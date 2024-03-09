@@ -17,7 +17,7 @@
         <RepositoryUrl>https://github.com/xtuker/xtuker.configurationstorage</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <RepositoryBranch>master</RepositoryBranch>
-        <Copyright>Copyright 2022 © Alexander Falkovsky</Copyright>
+        <Copyright>Copyright $([System.DateTime]::Today.ToString(yyyy)) © Alexander Falkovsky</Copyright>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
