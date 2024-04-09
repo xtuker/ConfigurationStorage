@@ -1,7 +1,6 @@
-﻿namespace KeyGenerator
+﻿namespace KeyGenerator;
+
+public class KeyData
 {
-    public class KeyData
-    {
-        public string Key { get; init; } = null!;
-    }
+    public string Key { get; init; } = null!;
 }

@@ -1,59 +1,58 @@
-﻿namespace Xtuker.ConfigurationStorage.EntityFramework.Extensions
+﻿namespace Xtuker.ConfigurationStorage.EntityFramework.Extensions;
+
+using System;
+using Microsoft.EntityFrameworkCore;
+using Xtuker.ConfigurationStorage.Extensions;
+
+public static class ConfigurationStorageSourceExtensions
 {
-    using System;
-    using Microsoft.EntityFrameworkCore;
-    using Xtuker.ConfigurationStorage.Extensions;
-
-    public static class ConfigurationStorageSourceExtensions
+    /// <summary>
+    /// Использовать EF Core db context
+    /// </summary>
+    public static ConfigurationStorageSource UseEfCoreDefaultStorage(this ConfigurationStorageSource storageSource,
+        Action<DbContextOptionsBuilder> builderConfigurator,
+        string tableName,
+        string? schema = null,
+        Action<ConfigurationDataDbContextOptions>? optionConfigurator = null)
     {
-        /// <summary>
-        /// Использовать EF Core db context
-        /// </summary>
-        public static ConfigurationStorageSource UseEfCoreDefaultStorage(this ConfigurationStorageSource storageSource,
-            Action<DbContextOptionsBuilder> builderConfigurator,
-            string tableName,
-            string? schema = null,
-            Action<ConfigurationDataDbContextOptions>? optionConfigurator = null)
-        {
-            var contextOptionsBuilder = new DbContextOptionsBuilder<DefaultConfigurationDataDbContext>();
+        var contextOptionsBuilder = new DbContextOptionsBuilder<DefaultConfigurationDataDbContext>();
 
-            contextOptionsBuilder.UseDbConfigurationTable(tableName, schema, optionConfigurator);
-            
-            builderConfigurator(contextOptionsBuilder);
+        contextOptionsBuilder.UseDbConfigurationTable(tableName, schema, optionConfigurator);
 
-            storageSource.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, ConfigurationData>(new DefaultConfigurationDataDbContext(contextOptionsBuilder.Options)));
+        builderConfigurator(contextOptionsBuilder);
 
-            return storageSource;
-        }
-        
-        /// <summary>
-        /// Использовать EF Core db context
-        /// </summary>
-        /// <param name="storageSource">Источник конфигурации</param>
-        /// <param name="factoryMethod">Источник конфигурации</param>
-        public static ConfigurationStorageSource UseEfCoreStorage<TDbCtx, TConfig>(this ConfigurationStorageSource storageSource, Func<TDbCtx> factoryMethod)
-            where TDbCtx : DbContext
-            where TConfig : class, IConfigurationData
-        {
-            storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod()));
+        storageSource.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, ConfigurationData>(new DefaultConfigurationDataDbContext(contextOptionsBuilder.Options)));
 
-            return storageSource;
-        }
-        
-        /// <summary>
-        /// Использовать EF Core db context
-        /// </summary>
-        /// <param name="storageSource">Источник конфигурации</param>
-        /// <param name="factoryMethod">Источник конфигурации</param>
-        public static ConfigurationStorageSource UseEfCoreStorage<TDbCtx, TConfig>(this ConfigurationStorageSource storageSource, Func<DbContextOptionsBuilder<TDbCtx>, TDbCtx> factoryMethod)
-            where TDbCtx : DbContext
-            where TConfig : class, IConfigurationData
-        {
-            var options = new DbContextOptionsBuilder<TDbCtx>();
+        return storageSource;
+    }
 
-            storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options)));
+    /// <summary>
+    /// Использовать EF Core db context
+    /// </summary>
+    /// <param name="storageSource">Источник конфигурации</param>
+    /// <param name="factoryMethod">Источник конфигурации</param>
+    public static ConfigurationStorageSource UseEfCoreStorage<TDbCtx, TConfig>(this ConfigurationStorageSource storageSource, Func<TDbCtx> factoryMethod)
+        where TDbCtx : DbContext
+        where TConfig : class, IConfigurationData
+    {
+        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod()));
 
-            return storageSource;
-        }
+        return storageSource;
+    }
+
+    /// <summary>
+    /// Использовать EF Core db context
+    /// </summary>
+    /// <param name="storageSource">Источник конфигурации</param>
+    /// <param name="factoryMethod">Источник конфигурации</param>
+    public static ConfigurationStorageSource UseEfCoreStorage<TDbCtx, TConfig>(this ConfigurationStorageSource storageSource, Func<DbContextOptionsBuilder<TDbCtx>, TDbCtx> factoryMethod)
+        where TDbCtx : DbContext
+        where TConfig : class, IConfigurationData
+    {
+        var options = new DbContextOptionsBuilder<TDbCtx>();
+
+        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options)));
+
+        return storageSource;
     }
 }

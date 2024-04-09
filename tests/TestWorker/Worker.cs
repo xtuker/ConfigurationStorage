@@ -1,22 +1,22 @@
-namespace TestWorker
+namespace TestWorker;
+
+using Xtuker.ConfigurationStorage;
+
+public class Worker : BackgroundService
 {
-    using Xtuker.ConfigurationStorage;
+    private readonly ILogger<Worker> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly IConfigurationStorage _repository;
 
-    public class Worker : BackgroundService
+    public Worker(ILogger<Worker> logger, IConfiguration configuration, IConfigurationStorage repository)
     {
-        private readonly ILogger<Worker> _logger;
-        private readonly IConfiguration _configuration;
-        private readonly IConfigurationStorage _repository;
-
-        public Worker(ILogger<Worker> logger, IConfiguration configuration, IConfigurationStorage repository)
-        {
             _logger = logger;
             _configuration = configuration;
             _repository = repository;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
             // _repository.SetData(new InMemoryDbConfigurationRepository.DbConfiguration()
             // {
             //     Key = "Test:CryptoValue",
@@ -36,5 +36,4 @@ namespace TestWorker
                 await Task.Delay(2000, stoppingToken);
             }
         }
-    }
 }

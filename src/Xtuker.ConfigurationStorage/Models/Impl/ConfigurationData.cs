@@ -1,17 +1,22 @@
-﻿namespace Xtuker.ConfigurationStorage
+﻿namespace Xtuker.ConfigurationStorage;
+
+/// <summary>
+/// Конфигурация
+/// </summary>
+public class ConfigurationData : IConfigurationData
 {
-    /// <summary>
-    /// Конфигурация
-    /// </summary>
-    public class ConfigurationData : IConfigurationData
+    /// <inheritdoc />
+    public string Key { get; set; } = null!;
+
+    /// <inheritdoc />
+    public string? Value { get; set; }
+
+    /// <inheritdoc />
+    public bool Encrypted { get; set; }
+
+    /// <inheritdoc />
+    public void SetValue(string? value)
     {
-        /// <inheritdoc />
-        public string Key { get; set; } = null!;
-
-        /// <inheritdoc />
-        public string? Value { get; set; }
-
-        /// <inheritdoc />
-        public bool Encrypted { get; set; }
+        Value = value;
     }
 }

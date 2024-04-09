@@ -1,19 +1,18 @@
-﻿namespace TestWorker.ef
-{
-    using Microsoft.EntityFrameworkCore;
+﻿namespace TestWorker.ef;
 
-    internal sealed class MyDbContext : DbContext
+using Microsoft.EntityFrameworkCore;
+
+internal sealed class MyDbContext : DbContext
+{
+    public MyDbContext(DbContextOptions<MyDbContext> options)
+        : base(options)
     {
-        public MyDbContext(DbContextOptions<MyDbContext> options)
-            : base(options)
-        {
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
             modelBuilder.ApplyConfiguration(new MyConfigurationDataMapping());
 
             base.OnModelCreating(modelBuilder);
         }
-    }
 }

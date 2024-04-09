@@ -1,13 +1,12 @@
-namespace Xtuker.ConfigurationStorage
+namespace Xtuker.ConfigurationStorage;
+
+/// <summary>
+/// Сервиз перезагрузки конфигурации из хранилища <see cref="IConfigurationStorage"/>
+/// </summary>
+public interface IConfigurationStorageReloader
 {
     /// <summary>
-    /// Сервиз перезагрузки конфигурации из хранилища <see cref="IConfigurationStorage"/>
+    /// Перезагрузить конфигурацию
     /// </summary>
-    public interface IConfigurationStorageReloader
-    {
-        /// <summary>
-        /// Перезагрузить конфигурацию
-        /// </summary>
-        void Reload();
-    }
+    void Reload();
 }

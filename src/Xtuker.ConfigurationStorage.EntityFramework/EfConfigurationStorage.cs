@@ -1,41 +1,40 @@
-﻿namespace Xtuker.ConfigurationStorage.EntityFramework
+﻿namespace Xtuker.ConfigurationStorage.EntityFramework;
+
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
+public sealed class EfConfigurationStorage<TDbCtx, TConfig> : BaseConfigurationStorage<TConfig>
+    where TDbCtx : DbContext
+    where TConfig : class, IConfigurationData
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.EntityFrameworkCore;
+    private TDbCtx DbContext { get; }
+    private DbSet<TConfig> DbSet { get; }
 
-    public sealed class EfConfigurationStorage<TDbCtx, TConfig> : BaseConfigurationStorage<TConfig>
-        where TDbCtx : DbContext
-        where TConfig : class, IConfigurationData
+    public EfConfigurationStorage(TDbCtx dbContext)
     {
-        private TDbCtx DbContext { get; }
-        private DbSet<TConfig> DbSet { get; }
+        DbContext = dbContext;
+        DbSet = DbContext.Set<TConfig>();
+    }
 
-        public EfConfigurationStorage(TDbCtx dbContext)
+    protected override void SetDataInternal(TConfig config)
+    {
+        var existRecord = DbSet.SingleOrDefault(x => x.Key == config.Key);
+        if (existRecord == null)
         {
-            DbContext = dbContext;
-            DbSet = DbContext.Set<TConfig>();
+            DbSet.Add(config);
+        }
+        else
+        {
+            existRecord.SetValue(config.Value);
+            DbSet.Update(existRecord);
         }
 
-        protected override void SetDataInternal(TConfig config)
-        {
-            var existRecord = DbSet.SingleOrDefault(x => x.Key == config.Key);
-            if (existRecord == null)
-            {
-                DbSet.Add(config);
-            }
-            else
-            {
-                existRecord.Value = config.Value;
-                DbSet.Update(existRecord);
-            }
+        DbContext.SaveChanges();
+    }
 
-            DbContext.SaveChanges();
-        }
-
-        protected override IEnumerable<TConfig> GetDataInternal()
-        {
-            return DbSet.AsNoTracking().ToList();
-        }
+    protected override IEnumerable<TConfig> GetDataInternal()
+    {
+        return DbSet.AsNoTracking().ToList();
     }
 }
