@@ -15,7 +15,7 @@ public interface IConfigurationCryptoTransformer
     /// <param name="silent">Не генерировать исключение</param>
     [return: NotNullIfNotNull(nameof(configurationData))]
     public T? Encrypt<T>(T? configurationData, bool silent = true)
-        where T : class, IConfigurationData;
+        where T : IConfigurationData;
 
     /// <summary>
     /// Расшифровать значение, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
@@ -24,7 +24,7 @@ public interface IConfigurationCryptoTransformer
     /// <param name="silent">Не генерировать исключение</param>
     [return: NotNullIfNotNull(nameof(configurationData))]
     public T? Decrypt<T>(T? configurationData, bool silent = true)
-        where T : class, IConfigurationData;
+        where T : IConfigurationData;
         
     /// <summary>
     /// Зашифровать значения, если установлен флаг <see cref="IConfigurationData.Encrypted"/>

@@ -25,59 +25,63 @@ public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoT
 
     /// <inheritdoc />
     public T? Encrypt<T>(T? configurationData, bool silent = true)
-        where T : class, IConfigurationData
+        where T : IConfigurationData
     {
         if (configurationData is {Encrypted: true, Value: not null})
         {
             using var alg = CreateSymmetricAlgorithm();
-            configurationData.SetValue(EncryptInternal(alg, configurationData.Value, silent));
+            var value = configurationData.Value;
+            configurationData.Value = EncryptInternal(alg, value, silent);
         }
 
         return configurationData;
     }
 
     /// <inheritdoc />
-    public T? Decrypt<T>(T? sensitiveSetting, bool silent = true)
-        where T : class, IConfigurationData
+    public T? Decrypt<T>(T? configurationData, bool silent = true)
+        where T : IConfigurationData
     {
-        if (sensitiveSetting is {Encrypted: true, Value: not null})
+        if (configurationData is {Encrypted: true, Value: not null})
         {
             using var alg = CreateSymmetricAlgorithm();
-            sensitiveSetting.SetValue(DecryptInternal(alg, sensitiveSetting.Value, silent));
+            var value = configurationData.Value;
+            configurationData.Value = DecryptInternal(alg, value, silent);
         }
 
-        return sensitiveSetting;
+        return configurationData;
     }
 
     /// <inheritdoc />
-    public IEnumerable<T> Encrypt<T>(IEnumerable<T> sensitiveSettings, bool silent = true)
+    public IEnumerable<T> Encrypt<T>(IEnumerable<T> configurationDatas, bool silent = true)
         where T : class, IConfigurationData
     {
         using var alg = CreateSymmetricAlgorithm();
-        foreach (var setting in sensitiveSettings)
+        foreach (var configurationData in configurationDatas)
         {
-            if (setting is {Encrypted: true, Value: not null})
+            if (configurationData is {Encrypted: true, Value: not null})
             {
-                setting.SetValue(EncryptInternal(alg, setting.Value, silent));
+                var value = configurationData.Value;
+                configurationData.Value = EncryptInternal(alg, value, silent);
             }
 
-            yield return setting;
+            yield return configurationData;
         }
     }
 
     /// <inheritdoc />
-    public IEnumerable<T> Decrypt<T>(IEnumerable<T> sensitiveSettings, bool silent = true)
+    public IEnumerable<T> Decrypt<T>(IEnumerable<T> configurationDatas, bool silent = true)
         where T : class, IConfigurationData
     {
         using var alg = CreateSymmetricAlgorithm();
-        foreach (var setting in sensitiveSettings)
+        foreach (var configurationData in configurationDatas)
         {
-            if (setting is {Encrypted: true, Value: not null})
+            if (configurationData is {Encrypted: true, Value: not null})
             {
-                setting.SetValue(DecryptInternal(alg, setting.Value, silent));
+                var value = configurationData.Value;
+                configurationData.Value = DecryptInternal(alg, value, silent);
             }
 
-            yield return setting;
+            yield return configurationData;
         }
     }
 
@@ -131,7 +135,7 @@ public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoT
         {
             var payload = JsonSerializer.Deserialize<EncryptedPayload>(cipherText);
 
-            using var decryptor = alg.CreateDecryptor(alg.Key, payload.Salt);
+            using var decryptor = alg.CreateDecryptor(alg.Key, payload!.Salt);
             using var ms = new MemoryStream(payload.Data);
             using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
             using var sr = new StreamReader(cs);
@@ -159,10 +163,5 @@ public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoT
         alg.GenerateIV();
     }
 
-    private readonly record struct EncryptedPayload(byte[] Data, byte[] Salt)
-    {
-        public byte[] Data { get; } = Data;
-
-        public byte[] Salt { get; } = Salt;
-    }
+    private record struct EncryptedPayload(byte[] Data, byte[] Salt);
 }

@@ -22,6 +22,7 @@ public abstract class BaseConfigurationDataMapping<TConfig> : IEntityTypeConfigu
 
     protected virtual void ConfigureOther(EntityTypeBuilder<TConfig> builder)
     {
+        builder.HasNoKey();
     }
 
     public void Configure(EntityTypeBuilder<TConfig> builder)

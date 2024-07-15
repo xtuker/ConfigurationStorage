@@ -14,15 +14,10 @@ public interface IConfigurationData
     /// <summary>
     /// Значение
     /// </summary>
-    string? Value { get; }
+    string? Value { get; set; }
         
     /// <summary>
     /// Признак что значение должно быть зашифровано перед сохранением
     /// </summary>
     bool Encrypted { get; }
-
-    /// <summary>
-    /// Задать значение
-    /// </summary>
-    void SetValue(string? value);
 }

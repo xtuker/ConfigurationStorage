@@ -2,14 +2,13 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Xtuker.ConfigurationStorage;
 
-public class MyConfigurationDataMapping : IEntityTypeConfiguration<ConfigurationData>
+internal class MyConfigurationDataMapping : IEntityTypeConfiguration<MyConfigurationData>
 {
-    public void Configure(EntityTypeBuilder<ConfigurationData> builder)
+    public void Configure(EntityTypeBuilder<MyConfigurationData> builder)
     {
         builder.ToTable("my_configuration");
-        builder.HasIndex(x => x.Key).IsUnique();
+        builder.HasKey(x => x.Key);
 
         builder.Property(x => x.Key).HasColumnName("key").IsRequired();
         builder.Property(x => x.Value).HasColumnName("value");

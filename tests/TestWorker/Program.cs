@@ -14,19 +14,25 @@ IHost host = Host.CreateDefaultBuilder(args)
         .AddJsonFile("appsettings.user.json", true)
         // Dapper Storage
         .AddDapperStorage(config => config.GetConnectionString("Pg")!,
-            "SELECT * FROM alr.db_config",
+            $@"SELECT ""{nameof(IConfigurationData.Key)}"", ""{nameof(IConfigurationData.Value)}"", ""{nameof(IConfigurationData.Encrypted)}"" FROM alr.db_config",
+            connectionString => new NpgsqlConnection(connectionString),
+            (config, x) => x.UseAesCryptoTransformer(config).UseLoggerFactory(loggerFactory).ReloadOnExpiry())
+
+        .AddDapperStorage<MyConfigurationData>(config => config.GetConnectionString("Pg")!,
+            $@"SELECT ""{nameof(IConfigurationData.Key)}"", ""{nameof(IConfigurationData.Value)}"", ""{nameof(IConfigurationData.Encrypted)}"" FROM alr.db_config",
             connectionString => new NpgsqlConnection(connectionString),
             (config, x) => x.UseAesCryptoTransformer(config).UseLoggerFactory(loggerFactory).ReloadOnExpiry())
 
         // Ef Storage
-        .AddEfCoreStorage((config, x) => x.UseDbConfigurationTable("db_config", "alr", z => z.WithTableColumns("key", "value", "encrypted"))
+        .AddEfCoreStorage(
+            (config, x) => x.UseDbConfigurationTable("db_config", "alr", z => z.WithTableColumns("key", "value", "encrypted"))
                 .UseNpgsql(config.GetConnectionString("Pg"))
                 .UseLoggerFactory(loggerFactory)
                 .EnableSensitiveDataLogging(),
             (config, x) => x.UseAesCryptoTransformer(config).UseLoggerFactory(loggerFactory).ReloadOnExpiry())
 
         // Ef Storage
-        .AddEfCoreStorage<MyDbContext, ConfigurationData>(ops => new MyDbContext(ops.Options),
+        .AddEfCoreStorage<MyDbContext, MyConfigurationData>(ops => new MyDbContext(ops.Options),
             (config, x) => x.UseNpgsql(config.GetConnectionString("Pg"))
                 .UseLoggerFactory(loggerFactory)
                 .EnableSensitiveDataLogging(),

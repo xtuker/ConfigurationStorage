@@ -59,6 +59,19 @@ public class Tests
         Print(decryptedData);
     }
 
+    [Test]
+    public void GenericTest()
+    {
+        IConfigurationStorage storage = new InMemoryStorage();
+
+        var interfaceType = typeof(IConfigurationStorage<>);
+        var storageType = storage.GetType();
+
+        var res = interfaceType.IsInstanceOfType(storage);
+
+        Assert.That(res, Is.True);
+    }
+
     private void Print(IConfigurationData data)
     {
 #if DEBUG
@@ -86,6 +99,43 @@ public class Tests
                 Value = Path.GetRandomFileName(),
                 Encrypted = true
             };
+        }
+    }
+
+    private class ConfigurationData : IConfigurationData
+    {
+        public required string Key { get; init; }
+
+        public string? Value { get; set; }
+
+        public bool Encrypted { get; init; }
+    }
+
+    private class InMemoryStorage : BaseConfigurationStorage<ConfigurationData>
+    {
+        private readonly IDictionary<string, ConfigurationData> _data = new Dictionary<string, ConfigurationData>()
+        {
+            ["Test:Value"] = new ConfigurationData
+            {
+                Key = "Test:Value",
+                Value = $"Value from {nameof(InMemoryStorage)}",
+                Encrypted = false
+            }
+        };
+
+        protected override void SetDataInternal(ConfigurationData configurationData)
+        {
+            _data[configurationData.Key] = configurationData;
+        }
+
+        protected override IEnumerable<IConfigurationData> GetDataInternal()
+        {
+            return _data.Values;
+        }
+
+        public InMemoryStorage()
+            : base(null)
+        {
         }
     }
 }

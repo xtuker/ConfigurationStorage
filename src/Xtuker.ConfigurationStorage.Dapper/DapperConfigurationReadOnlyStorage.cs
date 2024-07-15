@@ -6,7 +6,28 @@ using System.Data;
 using global::Dapper;
 using Xtuker.ConfigurationStorage.Crypto;
 
-internal sealed class DapperConfigurationReadOnlyStorage : BaseConfigurationStorage<ConfigurationData>
+internal sealed class DapperConfigurationReadOnlyStorage : DapperConfigurationReadOnlyStorage<DapperConfigurationReadOnlyStorage.ConfigurationData>
+{
+    public DapperConfigurationReadOnlyStorage(string connectionString,
+        string sqlCommand,
+        Func<string, IDbConnection> connectionFactory,
+        IConfigurationCryptoTransformer? cryptoTransformer)
+        : base(connectionString, sqlCommand, connectionFactory, cryptoTransformer)
+    {
+    }
+
+    internal class ConfigurationData : IConfigurationData
+    {
+        public string Key { get; set; } = null!;
+
+        public string? Value { get; set; }
+
+        public bool Encrypted { get; set; }
+    }
+}
+
+internal class DapperConfigurationReadOnlyStorage<TConfig> : BaseConfigurationReadOnlyStorage
+    where TConfig: class, IConfigurationData
 {
     private readonly string _connectionString;
     private readonly string _sqlCommand;
@@ -15,7 +36,7 @@ internal sealed class DapperConfigurationReadOnlyStorage : BaseConfigurationStor
     public DapperConfigurationReadOnlyStorage(string connectionString,
         string sqlCommand,
         Func<string, IDbConnection> connectionFactory,
-        IConfigurationCryptoTransformer? cryptoTransformer = null)
+        IConfigurationCryptoTransformer? cryptoTransformer)
         : base(cryptoTransformer)
     {
         _connectionString = connectionString
@@ -26,14 +47,9 @@ internal sealed class DapperConfigurationReadOnlyStorage : BaseConfigurationStor
             ?? throw new ArgumentNullException(nameof(connectionFactory), "Не задана метод создания соединения с базой данных");
     }
 
-    protected override void SetDataInternal(ConfigurationData config)
-    {
-        throw new NotSupportedException($"{nameof(DapperConfigurationReadOnlyStorage)} не поддержиает сохранение данных");
-    }
-
-    protected override IEnumerable<ConfigurationData> GetDataInternal()
+    protected override IEnumerable<IConfigurationData> GetDataInternal()
     {
         using var connection = _connectionFactory(_connectionString);
-        return connection.Query<ConfigurationData>(_sqlCommand);
+        return connection.Query<TConfig>(_sqlCommand);
     }
 }

@@ -1,7 +1,6 @@
 namespace Xtuker.ConfigurationStorage.EntityFramework.Extensions;
 
 using System;
-using System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Xtuker.ConfigurationStorage.Extensions;
@@ -27,7 +26,7 @@ public static class ConfigurationBuilderExtensions
             
         builderConfigurator(tmpConfig, options);
 
-        source.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, ConfigurationData>(new DefaultConfigurationDataDbContext(options.Options)));
+        source.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, DefaultConfigurationDataDbContext.ConfigurationData>(new DefaultConfigurationDataDbContext(options.Options), source.CryptoTransformer));
             
         return builder.Add(source);
     }
@@ -39,7 +38,7 @@ public static class ConfigurationBuilderExtensions
         Func<DbContextOptionsBuilder<TDbCtx>, TDbCtx> factoryMethod,
         Action<IConfiguration, DbContextOptionsBuilder>? builderConfigurator = null,
         Action<IConfiguration, ConfigurationStorageSource>? configure = null)
-        where TDbCtx : DbContext
+        where TDbCtx : DbContext, IConfigurationStorageDbContext<TConfig>
         where TConfig : class, IConfigurationData
     {
         var tmpConfig = builder.Build();
@@ -50,7 +49,7 @@ public static class ConfigurationBuilderExtensions
         var options = new DbContextOptionsBuilder<TDbCtx>();
         builderConfigurator?.Invoke(tmpConfig, options);
             
-        source.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options)));
+        source.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options), source.CryptoTransformer));
             
         return builder.Add(source);
     }

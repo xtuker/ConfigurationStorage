@@ -18,24 +18,24 @@ internal sealed class ConfigurationStorageChangeNotifier : IConfigurationStorage
     /// <param name="refreshInterval">Интервал изменений</param>
     public ConfigurationStorageChangeNotifier(TimeSpan refreshInterval)
     {
-            _refreshInterval = refreshInterval;
-        }
+        _refreshInterval = refreshInterval;
+    }
 
     public void NotifyChange()
     {
-            _cancellationTokenSource?.Cancel();
-        }
+        _cancellationTokenSource?.Cancel();
+    }
 
     public IChangeToken CreateChangeToken()
     {
-            var previousToken = Interlocked.Exchange(ref _cancellationTokenSource, new CancellationTokenSource(_refreshInterval));
-            previousToken?.Dispose();
-            return new CancellationChangeToken(_cancellationTokenSource!.Token);
-        }
+        var previousToken = Interlocked.Exchange(ref _cancellationTokenSource, new CancellationTokenSource(_refreshInterval));
+        previousToken?.Dispose();
+        return new CancellationChangeToken(_cancellationTokenSource!.Token);
+    }
 
     /// <inheritdoc />
     public void Dispose()
     {
-            _cancellationTokenSource?.Dispose();
-        }
+        _cancellationTokenSource?.Dispose();
+    }
 }

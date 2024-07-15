@@ -16,11 +16,11 @@ public static class ConfigurationStorageSourceExtensions
     public static T UseChangeNotifier<T>(this T source, IConfigurationStorageChangeNotifier storageChangeNotifier, int reloadInterval = 300)
         where T : ConfigurationStorageSource
     {
-            source.ChangeNotifier = storageChangeNotifier;
-            source.ReloadInterval = reloadInterval;
+        source.ChangeNotifier = storageChangeNotifier;
+        source.ReloadInterval = reloadInterval;
 
-            return source;
-        }
+        return source;
+    }
 
     /// <summary>
     /// Использовать хранилище данных
@@ -30,10 +30,10 @@ public static class ConfigurationStorageSourceExtensions
     public static T UseStorage<T>(this T source, IConfigurationStorage storage)
         where T : ConfigurationStorageSource
     {
-            source.Storage = storage;
+        source.Storage = storage;
 
-            return source;
-        }
+        return source;
+    }
 
     /// <summary>
     /// Использовать криптографический провайдер
@@ -43,10 +43,10 @@ public static class ConfigurationStorageSourceExtensions
     public static T UseCryptoTransformer<T>(this T source, IConfigurationCryptoTransformer cryptoTransformer)
         where T : ConfigurationStorageSource
     {
-            source.CryptoTransformer = cryptoTransformer;
+        source.CryptoTransformer = cryptoTransformer;
 
-            return source;
-        }
+        return source;
+    }
 
     /// <summary>
     /// Использовать логгер
@@ -56,10 +56,10 @@ public static class ConfigurationStorageSourceExtensions
     public static T UseLogger<T>(this T source, ILogger logger)
         where T : ConfigurationStorageSource
     {
-            source.Logger = logger;
+        source.Logger = logger;
 
-            return source;
-        }
+        return source;
+    }
 
     /// <summary>
     /// Использовать фабрику логгера
@@ -69,10 +69,10 @@ public static class ConfigurationStorageSourceExtensions
     public static T UseLoggerFactory<T>(this T source, ILoggerFactory loggerFactory)
         where T : ConfigurationStorageSource
     {
-            source.Logger = loggerFactory.CreateLogger<ConfigurationStorageProvider>();
+        source.Logger = loggerFactory.CreateLogger<ConfigurationStorageProvider>();
 
-            return source;
-        }
+        return source;
+    }
 
     /// <summary>
     /// Использовать автоматическое обновление данных по таймауту
@@ -82,10 +82,10 @@ public static class ConfigurationStorageSourceExtensions
     public static T ReloadOnExpiry<T>(this T source, int delaySeconds = 60)
         where T : ConfigurationStorageSource
     {
-            source.UseChangeNotifier(new ConfigurationStorageChangeNotifier(TimeSpan.FromSeconds(delaySeconds)));
+        source.UseChangeNotifier(new ConfigurationStorageChangeNotifier(TimeSpan.FromSeconds(delaySeconds)));
 
-            return source;
-        }
+        return source;
+    }
 
     /// <summary>
     /// Использовать <see cref="AesConfigurationCryptoTransformer"/>
@@ -95,8 +95,8 @@ public static class ConfigurationStorageSourceExtensions
     public static T UseAesCryptoTransformer<T>(this T source, ReadOnlySpan<byte> key)
         where T : ConfigurationStorageSource
     {
-            return source.UseCryptoTransformer(new AesConfigurationCryptoTransformer(key));
-        }
+        return source.UseCryptoTransformer(new AesConfigurationCryptoTransformer(key));
+    }
 
     /// <summary>
     /// Использовать <see cref="AesConfigurationCryptoTransformer"/>
@@ -109,10 +109,10 @@ public static class ConfigurationStorageSourceExtensions
     public static T UseAesCryptoTransformer<T>(this T source, IConfiguration configurationSection)
         where T : ConfigurationStorageSource
     {
-            var keyStr = configurationSection[ConfigurationStorageSource.CryptoTransformerKeyPath] ??
-                throw new ArgumentNullException(ConfigurationStorageSource.CryptoTransformerKeyPath, "Не найден ключ шифрования");
-            var key = Convert.FromBase64String(keyStr);
+        var keyStr = configurationSection[ConfigurationStorageSource.CryptoTransformerKeyPath] ??
+            throw new ArgumentNullException(ConfigurationStorageSource.CryptoTransformerKeyPath, "Не найден ключ шифрования");
+        var key = Convert.FromBase64String(keyStr);
 
-            return source.UseAesCryptoTransformer(key);
-        }
+        return source.UseAesCryptoTransformer(key);
+    }
 }

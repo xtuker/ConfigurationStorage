@@ -21,7 +21,7 @@ public static class ConfigurationStorageSourceExtensions
 
         builderConfigurator(contextOptionsBuilder);
 
-        storageSource.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, ConfigurationData>(new DefaultConfigurationDataDbContext(contextOptionsBuilder.Options)));
+        storageSource.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, DefaultConfigurationDataDbContext.ConfigurationData>(new DefaultConfigurationDataDbContext(contextOptionsBuilder.Options), storageSource.CryptoTransformer));
 
         return storageSource;
     }
@@ -32,10 +32,10 @@ public static class ConfigurationStorageSourceExtensions
     /// <param name="storageSource">Источник конфигурации</param>
     /// <param name="factoryMethod">Источник конфигурации</param>
     public static ConfigurationStorageSource UseEfCoreStorage<TDbCtx, TConfig>(this ConfigurationStorageSource storageSource, Func<TDbCtx> factoryMethod)
-        where TDbCtx : DbContext
+        where TDbCtx : DbContext, IConfigurationStorageDbContext<TConfig>
         where TConfig : class, IConfigurationData
     {
-        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod()));
+        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(), storageSource.CryptoTransformer));
 
         return storageSource;
     }
@@ -46,12 +46,12 @@ public static class ConfigurationStorageSourceExtensions
     /// <param name="storageSource">Источник конфигурации</param>
     /// <param name="factoryMethod">Источник конфигурации</param>
     public static ConfigurationStorageSource UseEfCoreStorage<TDbCtx, TConfig>(this ConfigurationStorageSource storageSource, Func<DbContextOptionsBuilder<TDbCtx>, TDbCtx> factoryMethod)
-        where TDbCtx : DbContext
+        where TDbCtx : DbContext, IConfigurationStorageDbContext<TConfig>
         where TConfig : class, IConfigurationData
     {
         var options = new DbContextOptionsBuilder<TDbCtx>();
 
-        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options)));
+        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options), storageSource.CryptoTransformer));
 
         return storageSource;
     }

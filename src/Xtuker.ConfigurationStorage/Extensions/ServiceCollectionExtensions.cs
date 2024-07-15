@@ -3,7 +3,6 @@
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Xtuker.ConfigurationStorage.Crypto;
 
 /// <summary>
 /// Расширение <see cref="IServiceCollection"/>
@@ -18,25 +17,9 @@ public static class ServiceCollectionExtensions
         var storage = configuration.GetConfigurationStorageProvider().Storage
             ?? throw new NotSupportedException($"{nameof(IConfigurationStorage)} does not used");
 
-        return serviceCollection.AddSingleton(storage).AddSingleton<IConfigurationStorageReloader, ConfigurationStorageReloader>();
-    }
-        
-    /// <summary>
-    /// Зарегистрировать используемые сервисы <see cref="IConfigurationStorage"/> в <see cref="IServiceCollection"/>
-    /// </summary>
-    public static IServiceCollection AddConfigurationStorageInfrastructure<TConfig>(this IServiceCollection serviceCollection, IConfiguration configuration)
-        where TConfig : class, IConfigurationData
-    {
-        var storage = configuration.GetConfigurationStorageProvider().Storage
-            ?? throw new NotSupportedException($"{nameof(IConfigurationStorage)} does not used");
-        if (storage is IConfigurationStorage<TConfig> typedStorage)
+        foreach (var storageType in storage.GetType().GetInterfaces())
         {
-            serviceCollection.AddSingleton(typedStorage)
-                .AddSingleton<IConfigurationStorage>(typedStorage);
-        }
-        else
-        {
-            serviceCollection.AddSingleton(storage);
+            serviceCollection.AddSingleton(storageType, storage);
         }
 
         if (storage.CryptoTransformer != null)

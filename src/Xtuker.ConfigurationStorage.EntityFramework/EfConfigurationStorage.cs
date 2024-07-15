@@ -3,38 +3,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Xtuker.ConfigurationStorage.Crypto;
 
-public sealed class EfConfigurationStorage<TDbCtx, TConfig> : BaseConfigurationStorage<TConfig>
-    where TDbCtx : DbContext
+internal sealed class EfConfigurationStorage<TDbCtx, TConfig> : BaseConfigurationStorage<TConfig>
+    where TDbCtx : DbContext, IConfigurationStorageDbContext<TConfig>
     where TConfig : class, IConfigurationData
 {
     private TDbCtx DbContext { get; }
-    private DbSet<TConfig> DbSet { get; }
 
-    public EfConfigurationStorage(TDbCtx dbContext)
+    public EfConfigurationStorage(TDbCtx dbContext, IConfigurationCryptoTransformer? cryptoTransformer)
+        : base(cryptoTransformer)
     {
         DbContext = dbContext;
-        DbSet = DbContext.Set<TConfig>();
     }
 
     protected override void SetDataInternal(TConfig config)
     {
-        var existRecord = DbSet.SingleOrDefault(x => x.Key == config.Key);
+        var existRecord = DbContext.ConfigurationDataDbSet.SingleOrDefault(x => x.Key == config.Key);
         if (existRecord == null)
         {
-            DbSet.Add(config);
+            DbContext.ConfigurationDataDbSet.Add(config);
         }
         else
         {
-            existRecord.SetValue(config.Value);
-            DbSet.Update(existRecord);
+            existRecord.Value = config.Value;
+            DbContext.ConfigurationDataDbSet.Update(existRecord);
         }
 
         DbContext.SaveChanges();
     }
 
-    protected override IEnumerable<TConfig> GetDataInternal()
+    protected override IEnumerable<IConfigurationData> GetDataInternal()
     {
-        return DbSet.AsNoTracking().ToList();
+        return DbContext.ConfigurationDataDbSet.AsNoTracking().ToList();
     }
 }

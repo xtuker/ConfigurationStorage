@@ -2,9 +2,12 @@
 
 using Microsoft.EntityFrameworkCore;
 
-internal sealed class DefaultConfigurationDataDbContext : DbContext
+internal sealed class DefaultConfigurationDataDbContext : DbContext, IConfigurationStorageDbContext<DefaultConfigurationDataDbContext.ConfigurationData>
 {
     private readonly ConfigurationDataDbContextOptions _ops;
+
+    public DbSet<ConfigurationData> ConfigurationDataDbSet { get; set; }
+
     public DefaultConfigurationDataDbContext(DbContextOptions<DefaultConfigurationDataDbContext> options)
         : base(options)
     {
@@ -31,5 +34,14 @@ internal sealed class DefaultConfigurationDataDbContext : DbContext
             ValueColumnName = options.ValueColumnName;
             EncryptedColumnName = options.EncryptedColumnName;
         }
+    }
+
+    internal class ConfigurationData : IConfigurationData
+    {
+        public string Key { get; set; } = null!;
+
+        public string? Value { get; set; }
+
+        public bool Encrypted { get; set; }
     }
 }
