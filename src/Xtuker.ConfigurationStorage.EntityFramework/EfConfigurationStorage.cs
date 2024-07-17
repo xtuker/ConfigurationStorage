@@ -3,37 +3,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Xtuker.ConfigurationStorage.Crypto;
 
-internal sealed class EfConfigurationStorage<TDbCtx, TConfig> : BaseConfigurationStorage<TConfig>
+internal sealed class EfConfigurationStorage<TDbCtx, TConfig> : IConfigurationStorage
     where TDbCtx : DbContext, IConfigurationStorageDbContext<TConfig>
     where TConfig : class, IConfigurationData
 {
     private TDbCtx DbContext { get; }
 
-    public EfConfigurationStorage(TDbCtx dbContext, IConfigurationCryptoTransformer? cryptoTransformer)
-        : base(cryptoTransformer)
+    public EfConfigurationStorage(TDbCtx dbContext)
     {
         DbContext = dbContext;
     }
 
-    protected override void SetDataInternal(TConfig config)
-    {
-        var existRecord = DbContext.ConfigurationDataDbSet.SingleOrDefault(x => x.Key == config.Key);
-        if (existRecord == null)
-        {
-            DbContext.ConfigurationDataDbSet.Add(config);
-        }
-        else
-        {
-            existRecord.Value = config.Value;
-            DbContext.ConfigurationDataDbSet.Update(existRecord);
-        }
-
-        DbContext.SaveChanges();
-    }
-
-    protected override IEnumerable<IConfigurationData> GetDataInternal()
+    public IEnumerable<IConfigurationData> GetData()
     {
         return DbContext.ConfigurationDataDbSet.AsNoTracking().ToList();
     }

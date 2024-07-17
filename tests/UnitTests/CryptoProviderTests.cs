@@ -4,7 +4,7 @@ using Xtuker.ConfigurationStorage;
 using Xtuker.ConfigurationStorage.Crypto;
 using Xtuker.ConfigurationStorage.Extensions;
 
-public class Tests
+public partial class Tests
 {
     private IConfigurationCryptoTransformer CryptoTransformer { get; set; }
 
@@ -22,7 +22,7 @@ public class Tests
     [TestCase("test_string546567")]
     public void SingleEncryptDecryptTest(string srcText)
     {
-        var origData = new ConfigurationData {Key = "TestKey", Value = srcText, Encrypted = true};
+        var origData = new TestConfigurationData {Key = "TestKey", Value = srcText, Encrypted = true};
         var encryptedData = CryptoTransformer.Encrypt(origData);
         Assert.That(encryptedData, Is.Not.Null);
         Assert.That(encryptedData.Value, Is.Not.EqualTo(srcText));
@@ -80,21 +80,12 @@ public class Tests
     {
         for (int i = 0; i < count; i++)
         {
-            yield return new ConfigurationData
+            yield return new TestConfigurationData
             {
                 Key = i.ToString(),
                 Value = Path.GetRandomFileName(),
                 Encrypted = true
             };
         }
-    }
-
-    private class ConfigurationData : IConfigurationData
-    {
-        public required string Key { get; init; }
-
-        public string? Value { get; set; }
-
-        public bool Encrypted { get; init; }
     }
 }

@@ -9,8 +9,16 @@ using Microsoft.Extensions.Primitives;
 /// </summary>
 internal sealed class ConfigurationStorageChangeNotifier : IConfigurationStorageChangeNotifier
 {
-    private readonly TimeSpan _refreshInterval;
+    private readonly Func<CancellationTokenSource> _factory;
     private volatile CancellationTokenSource? _cancellationTokenSource;
+
+    /// <summary>
+    /// .ctor
+    /// </summary>
+    public ConfigurationStorageChangeNotifier()
+    {
+        _factory = () => new CancellationTokenSource();
+    }
 
     /// <summary>
     /// .ctor
@@ -18,7 +26,7 @@ internal sealed class ConfigurationStorageChangeNotifier : IConfigurationStorage
     /// <param name="refreshInterval">Интервал изменений</param>
     public ConfigurationStorageChangeNotifier(TimeSpan refreshInterval)
     {
-        _refreshInterval = refreshInterval;
+        _factory = () => new CancellationTokenSource(refreshInterval);
     }
 
     public void NotifyChange()
@@ -28,7 +36,7 @@ internal sealed class ConfigurationStorageChangeNotifier : IConfigurationStorage
 
     public IChangeToken CreateChangeToken()
     {
-        var previousToken = Interlocked.Exchange(ref _cancellationTokenSource, new CancellationTokenSource(_refreshInterval));
+        var previousToken = Interlocked.Exchange(ref _cancellationTokenSource, _factory());
         previousToken?.Dispose();
         return new CancellationChangeToken(_cancellationTokenSource!.Token);
     }

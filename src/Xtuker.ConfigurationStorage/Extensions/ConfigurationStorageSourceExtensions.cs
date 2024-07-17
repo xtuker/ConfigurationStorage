@@ -36,19 +36,6 @@ public static class ConfigurationStorageSourceExtensions
     }
 
     /// <summary>
-    /// Использовать криптографический провайдер
-    /// </summary>
-    /// <param name="source">Источник конфигурации</param>
-    /// <param name="cryptoTransformer">Криптографический провайдер</param>
-    public static T UseCryptoTransformer<T>(this T source, IConfigurationCryptoTransformer cryptoTransformer)
-        where T : ConfigurationStorageSource
-    {
-        source.CryptoTransformer = cryptoTransformer;
-
-        return source;
-    }
-
-    /// <summary>
     /// Использовать логгер
     /// </summary>
     /// <param name="source">Источник конфигурации</param>
@@ -83,6 +70,19 @@ public static class ConfigurationStorageSourceExtensions
         where T : ConfigurationStorageSource
     {
         source.UseChangeNotifier(new ConfigurationStorageChangeNotifier(TimeSpan.FromSeconds(delaySeconds)));
+
+        return source;
+    }
+
+    /// <summary>
+    /// Использовать криптографический провайдер
+    /// </summary>
+    /// <param name="source">Источник конфигурации</param>
+    /// <param name="cryptoTransformer">Криптографический провайдер</param>
+    public static T UseCryptoTransformer<T>(this T source, IConfigurationCryptoTransformer cryptoTransformer)
+        where T : ConfigurationStorageSource
+    {
+        source.CryptoTransformer = cryptoTransformer;
 
         return source;
     }

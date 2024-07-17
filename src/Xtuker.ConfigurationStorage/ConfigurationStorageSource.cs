@@ -2,6 +2,7 @@ namespace Xtuker.ConfigurationStorage;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xtuker.ConfigurationStorage.Crypto;
 
 /// <inheritdoc />
@@ -25,7 +26,7 @@ public class ConfigurationStorageSource : IConfigurationSource
     /// <summary>
     /// Сервис логирования
     /// </summary>
-    public ILogger? Logger { get; internal set; }
+    public ILogger Logger { get; internal set; } = NullLogger.Instance;
 
     /// <summary>
     /// Сервис отслеживания изменений конфигурации

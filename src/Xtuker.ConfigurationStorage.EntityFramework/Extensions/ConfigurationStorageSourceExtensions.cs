@@ -21,7 +21,7 @@ public static class ConfigurationStorageSourceExtensions
 
         builderConfigurator(contextOptionsBuilder);
 
-        storageSource.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, DefaultConfigurationDataDbContext.ConfigurationData>(new DefaultConfigurationDataDbContext(contextOptionsBuilder.Options), storageSource.CryptoTransformer));
+        storageSource.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, DefaultConfigurationDataDbContext.ConfigurationData>(new DefaultConfigurationDataDbContext(contextOptionsBuilder.Options)));
 
         return storageSource;
     }
@@ -35,7 +35,7 @@ public static class ConfigurationStorageSourceExtensions
         where TDbCtx : DbContext, IConfigurationStorageDbContext<TConfig>
         where TConfig : class, IConfigurationData
     {
-        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(), storageSource.CryptoTransformer));
+        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod()));
 
         return storageSource;
     }
@@ -51,7 +51,7 @@ public static class ConfigurationStorageSourceExtensions
     {
         var options = new DbContextOptionsBuilder<TDbCtx>();
 
-        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options), storageSource.CryptoTransformer));
+        storageSource.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options)));
 
         return storageSource;
     }

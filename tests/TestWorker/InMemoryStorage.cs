@@ -2,7 +2,7 @@
 
 using Xtuker.ConfigurationStorage;
 
-internal class InMemoryStorage : BaseConfigurationStorage<MyConfigurationData>
+internal class InMemoryStorage : IConfigurationStorage
 {
     private readonly IDictionary<string, MyConfigurationData> _data = new Dictionary<string, MyConfigurationData>()
     {
@@ -14,18 +14,13 @@ internal class InMemoryStorage : BaseConfigurationStorage<MyConfigurationData>
         }
     };
 
-    protected override void SetDataInternal(MyConfigurationData configurationData)
+    public void SetData(MyConfigurationData configurationData)
     {
         _data[configurationData.Key] = configurationData;
     }
 
-    protected override IEnumerable<IConfigurationData> GetDataInternal()
+    public IEnumerable<IConfigurationData> GetData()
     {
         return _data.Values;
-    }
-
-    public InMemoryStorage()
-        : base(null)
-    {
     }
 }

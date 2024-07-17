@@ -1,6 +1,7 @@
 ﻿namespace Xtuker.ConfigurationStorage.Extensions;
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 
@@ -14,5 +15,14 @@ internal static class ConfigurationExtensions
     {
         return (configuration as IConfigurationRoot)?.Providers.OfType<ConfigurationStorageProvider>().LastOrDefault()
             ?? throw new NotSupportedException($"{nameof(ConfigurationStorageProvider)} not found");
+    }
+
+    /// <summary>
+    /// Получить все экземпляры <see cref="ConfigurationStorageProvider"/>
+    /// </summary>
+    public static IEnumerable<ConfigurationStorageProvider> GetConfigurationStorageProviders(this IConfiguration configuration)
+    {
+        return (configuration as IConfigurationRoot)?.Providers.OfType<ConfigurationStorageProvider>()
+            ?? ArraySegment<ConfigurationStorageProvider>.Empty;
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace Xtuker.ConfigurationStorage.Extensions;
 
-using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Xtuker.ConfigurationStorage.Crypto;
 
 /// <summary>
 /// Расширение <see cref="IServiceCollection"/>
@@ -11,22 +11,22 @@ public static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Зарегистрировать используемые сервисы <see cref="IConfigurationStorage"/> в <see cref="IServiceCollection"/>
+    /// <remarks>
+    /// <see cref="IConfigurationStorageReloader"/><br/>
+    /// <see cref="IConfigurationStorageChangeNotifier"/>
+    /// <see cref="IConfigurationCryptoTransformer"/> if configured<br/>
+    /// </remarks>
     /// </summary>
     public static IServiceCollection AddConfigurationStorageInfrastructure(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        var storage = configuration.GetConfigurationStorageProvider().Storage
-            ?? throw new NotSupportedException($"{nameof(IConfigurationStorage)} does not used");
+        var provider = configuration.GetConfigurationStorageProvider();
 
-        foreach (var storageType in storage.GetType().GetInterfaces())
+        if (provider.CryptoTransformer != null)
         {
-            serviceCollection.AddSingleton(storageType, storage);
+            serviceCollection.AddSingleton(provider.CryptoTransformer);
         }
 
-        if (storage.CryptoTransformer != null)
-        {
-            serviceCollection.AddSingleton(storage.CryptoTransformer);
-        }
-
-        return serviceCollection.AddSingleton<IConfigurationStorageReloader, ConfigurationStorageReloader>();
+        return serviceCollection.AddSingleton(provider.ChangeNotifier)
+            .AddSingleton<IConfigurationStorageReloader, ConfigurationStorageReloader>();
     }
 }

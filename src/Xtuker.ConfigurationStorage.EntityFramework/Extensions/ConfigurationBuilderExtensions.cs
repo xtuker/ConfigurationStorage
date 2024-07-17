@@ -26,7 +26,7 @@ public static class ConfigurationBuilderExtensions
             
         builderConfigurator(tmpConfig, options);
 
-        source.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, DefaultConfigurationDataDbContext.ConfigurationData>(new DefaultConfigurationDataDbContext(options.Options), source.CryptoTransformer));
+        source.UseStorage(new EfConfigurationStorage<DefaultConfigurationDataDbContext, DefaultConfigurationDataDbContext.ConfigurationData>(new DefaultConfigurationDataDbContext(options.Options)));
             
         return builder.Add(source);
     }
@@ -49,7 +49,7 @@ public static class ConfigurationBuilderExtensions
         var options = new DbContextOptionsBuilder<TDbCtx>();
         builderConfigurator?.Invoke(tmpConfig, options);
             
-        source.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options), source.CryptoTransformer));
+        source.UseStorage(new EfConfigurationStorage<TDbCtx, TConfig>(factoryMethod(options)));
             
         return builder.Add(source);
     }

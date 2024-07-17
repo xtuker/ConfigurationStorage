@@ -26,7 +26,7 @@ public static class ConfigurationBuilderExtensions
         var source = new ConfigurationStorageSource();
         configure?.Invoke(tmpConfig, source);
 
-        source.UseStorage(new DapperConfigurationReadOnlyStorage<TConfig>(connectionString, sqlCommand, dbConnectionFactory, source.CryptoTransformer));
+        source.UseStorage(new DapperConfigurationStorage<TConfig>(connectionString, sqlCommand, dbConnectionFactory));
             
         return builder.Add(source);
     }
@@ -46,7 +46,7 @@ public static class ConfigurationBuilderExtensions
         var source = new ConfigurationStorageSource();
         configure?.Invoke(tmpConfig, source);
 
-        source.UseStorage(new DapperConfigurationReadOnlyStorage(connectionString, sqlCommand, dbConnectionFactory, source.CryptoTransformer));
+        source.UseStorage(new DapperConfigurationStorage(connectionString, sqlCommand, dbConnectionFactory));
 
         return builder.Add(source);
     }
