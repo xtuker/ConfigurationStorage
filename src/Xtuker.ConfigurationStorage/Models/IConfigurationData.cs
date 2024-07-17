@@ -1,23 +1,26 @@
 ﻿namespace Xtuker.ConfigurationStorage;
 
+using Xtuker.ConfigurationStorage.Crypto;
+
 /// <summary>
-/// Данные конфигурации
+/// Key/Value configuration
 /// </summary>
 public interface IConfigurationData
 {
     /// <summary>
-    /// Ключ
+    /// Key
     /// <example>Foo:Bar:Baz</example>
     /// </summary>
     string Key { get; }
 
     /// <summary>
-    /// Значение
+    /// Value
     /// </summary>
     string? Value { get; set; }
         
     /// <summary>
-    /// Признак что значение должно быть зашифровано перед сохранением
+    /// If <see langword="true"/>, <see cref="Value"/> must be encrypted in storage
     /// </summary>
+    /// <seealso cref="IConfigurationCryptoTransformer"/>
     bool Encrypted { get; }
 }

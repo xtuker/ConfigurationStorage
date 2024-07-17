@@ -5,15 +5,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Xtuker.ConfigurationStorage.Crypto;
 
 /// <summary>
-/// Расширение <see cref="IServiceCollection"/>
+/// Extensions for <see cref="IServiceCollection"/>
 /// </summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Зарегистрировать используемые сервисы <see cref="IConfigurationStorage"/> в <see cref="IServiceCollection"/>
+    /// Add used services in <see cref="IConfigurationStorage"/> to <see cref="IServiceCollection"/>
     /// <remarks>
     /// <see cref="IConfigurationStorageReloader"/><br/>
-    /// <see cref="IConfigurationStorageChangeNotifier"/>
+    /// <see cref="IConfigurationStorageChangeNotificationService"/>
     /// <see cref="IConfigurationCryptoTransformer"/> if configured<br/>
     /// </remarks>
     /// </summary>
@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
             serviceCollection.AddSingleton(provider.CryptoTransformer);
         }
 
-        return serviceCollection.AddSingleton(provider.ChangeNotifier)
+        return serviceCollection.AddSingleton(provider.ChangeNotificationService)
             .AddSingleton<IConfigurationStorageReloader, ConfigurationStorageReloader>();
     }
 }

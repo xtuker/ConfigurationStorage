@@ -11,47 +11,36 @@ using Microsoft.Extensions.Primitives;
 using Xtuker.ConfigurationStorage.Crypto;
 
 /// <summary>
-/// Поставщик конфигурации из базы данных
+/// Configuration provider with loading configs from database
 /// </summary>
 internal sealed class ConfigurationStorageProvider : ConfigurationProvider, IDisposable
 {
     private readonly object _locker = new();
-    private const int DefaultInterval = 300;
+    private static readonly ReadOnlyDictionary<string, string?> EmptyData = new (new Dictionary<string, string?>());
 
-    private readonly IDisposable? _changeTokenRegistration;
+    private readonly IConfigurationStorage _storage;
     private readonly ILogger _logger;
+    private readonly IDisposable? _changeTokenRegistration;
 
-    /// <summary>
-    /// Хранилище конфигурации
-    /// </summary>
-    internal IConfigurationStorage Storage { get; }
-
-    /// <summary>
-    /// Провайдер криптографических преобразований
-    /// </summary>
     internal IConfigurationCryptoTransformer? CryptoTransformer { get; }
 
-    /// <summary>
-    /// Сервис отслеживания изменений конфигурации
-    /// </summary>
-    internal IConfigurationStorageChangeNotifier ChangeNotifier { get; }
-
-    private readonly IDictionary<string, string?> _emptyData = new ReadOnlyDictionary<string, string?>(new Dictionary<string, string?>());
+    internal IConfigurationStorageChangeNotificationService ChangeNotificationService { get; }
 
     /// <inheritdoc />
     public ConfigurationStorageProvider(ConfigurationStorageSource storageSource)
     {
-        Storage = storageSource.Storage ?? throw new ArgumentException(nameof(ConfigurationStorageSource.Storage));
-        CryptoTransformer = storageSource.CryptoTransformer;
+        _storage = storageSource.Storage ?? throw new ArgumentException(nameof(ConfigurationStorageSource.Storage));
         _logger = storageSource.Logger;
 
-        ChangeNotifier = storageSource.ChangeNotifier ?? new ConfigurationStorageChangeNotifier();
-        _changeTokenRegistration = ChangeToken.OnChange(() => ChangeNotifier.CreateChangeToken(), Load);
+        CryptoTransformer = storageSource.CryptoTransformer;
+        ChangeNotificationService = storageSource.ChangeNotifier ?? new ConfigurationStorageChangeNotificationService();
+
+        _changeTokenRegistration = ChangeToken.OnChange(() => ChangeNotificationService.CreateChangeToken(), Load);
     }
 
     public void Reload()
     {
-        ChangeNotifier.NotifyChange();
+        ChangeNotificationService.NotifyChange();
     }
 
     /// <inheritdoc />
@@ -68,7 +57,7 @@ internal sealed class ConfigurationStorageProvider : ConfigurationProvider, IDis
         {
             if (Monitor.TryEnter(_locker))
             {
-                var data = CryptoTransformer == null ? Storage.GetData() : CryptoTransformer.Decrypt(Storage.GetData());
+                var data = CryptoTransformer == null ? _storage.GetData() : CryptoTransformer.Decrypt(_storage.GetData());
                 Data = data.Where(x => !string.IsNullOrEmpty(x?.Key))
                     .ToDictionary(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
 
@@ -77,7 +66,7 @@ internal sealed class ConfigurationStorageProvider : ConfigurationProvider, IDis
         }
         catch(Exception e)
         {
-            Data = _emptyData;
+            Data = EmptyData;
             _logger.LogError(e, "Load configuration error");
         }
         finally
@@ -93,6 +82,6 @@ internal sealed class ConfigurationStorageProvider : ConfigurationProvider, IDis
     public void Dispose()
     {
         _changeTokenRegistration?.Dispose();
-        ChangeNotifier?.Dispose();
+        ChangeNotificationService.Dispose();
     }
 }

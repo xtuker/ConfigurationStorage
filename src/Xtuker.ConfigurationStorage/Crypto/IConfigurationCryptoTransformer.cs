@@ -4,41 +4,41 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
-/// Провайдер криптографических преобразований для <see cref="IConfigurationData"/>
+/// Encrypt/Decrypt service for <see cref="IConfigurationData"/>
 /// </summary>
 public interface IConfigurationCryptoTransformer
 {
     /// <summary>
-    /// Зашифровать значение, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
+    /// Encrypt <see cref="IConfigurationData.Value"/> if <see cref="IConfigurationData.Encrypted"/> is <see langword="true"/>
     /// </summary>
-    /// <param name="configurationData">Настройки</param>
-    /// <param name="silent">Не генерировать исключение</param>
+    /// <param name="configurationData">configuration value instance</param>
+    /// <param name="silent">suppress exceptions</param>
     [return: NotNullIfNotNull(nameof(configurationData))]
     public T? Encrypt<T>(T? configurationData, bool silent = true)
         where T : IConfigurationData;
 
     /// <summary>
-    /// Расшифровать значение, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
+    /// Decrypt <see cref="IConfigurationData.Value"/> if <see cref="IConfigurationData.Encrypted"/> is <see langword="true"/>
     /// </summary>
-    /// <param name="configurationData">Настройки</param>
-    /// <param name="silent">Не генерировать исключение</param>
+    /// <param name="configurationData">configuration value instance</param>
+    /// <param name="silent">suppress exceptions</param>
     [return: NotNullIfNotNull(nameof(configurationData))]
     public T? Decrypt<T>(T? configurationData, bool silent = true)
         where T : IConfigurationData;
         
     /// <summary>
-    /// Зашифровать значения, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
+    /// Encrypt each <see cref="IConfigurationData.Value"/> if <see cref="IConfigurationData.Encrypted"/> is <see langword="true"/>
     /// </summary>
-    /// <param name="configurationDatas">Настройки</param>
-    /// <param name="silent">Не генерировать исключение</param>
+    /// <param name="configurationDatas">configuration values</param>
+    /// <param name="silent">suppress exceptions</param>
     public IEnumerable<T> Encrypt<T>(IEnumerable<T> configurationDatas, bool silent = true)
         where T : class, IConfigurationData;
         
     /// <summary>
-    /// Расшифровать значения, если установлен флаг <see cref="IConfigurationData.Encrypted"/>
+    /// Decrypt each <see cref="IConfigurationData.Value"/> if <see cref="IConfigurationData.Encrypted"/> is <see langword="true"/>
     /// </summary>
-    /// <param name="configurationDatas">Настройки</param>
-    /// <param name="silent">Не генерировать исключение</param>
+    /// <param name="configurationDatas">configuration values</param>
+    /// <param name="silent">suppress exceptions</param>
     public IEnumerable<T> Decrypt<T>(IEnumerable<T> configurationDatas, bool silent = true)
         where T : class, IConfigurationData;
 }

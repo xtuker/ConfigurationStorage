@@ -7,21 +7,23 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 /// <summary>
-/// Провайдер шифрования
+/// Base implementation <see cref="IConfigurationCryptoTransformer"/>
 /// </summary>
 public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoTransformer
 {
     /// <summary>
-    /// Фабричный метод создания симметричного алгоритма шифрования
+    /// <see cref="SymmetricAlgorithm"/> factory
     /// </summary>
+    /// <returns></returns>
     protected abstract SymmetricAlgorithm CreateSymmetricAlgorithm();
 
     /// <summary>
-    /// Логгер
+    /// Logger instance
     /// </summary>
-    protected ILogger? Logger { get; set; }
+    public ILogger Logger { get; internal set; } = NullLogger.Instance;
 
     /// <inheritdoc />
     public T? Encrypt<T>(T? configurationData, bool silent = true)
@@ -86,8 +88,11 @@ public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoT
     }
 
     /// <summary>
-    /// Зашифровать строку
+    /// Encrypt plain text
     /// </summary>
+    /// <param name="alg">symmetric encrypt algorithm</param>
+    /// <param name="plainText">string to encrypt</param>
+    /// <param name="silent">suppress exceptions</param>
     [return:NotNullIfNotNull(nameof(plainText))]
     protected virtual string? EncryptInternal(SymmetricAlgorithm alg, string? plainText, bool silent)
     {
@@ -111,7 +116,7 @@ public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoT
         }
         catch (Exception e)
         {
-            Logger?.LogWarning(e, "Encrypt config failed");
+            Logger.LogWarning(e, "Encrypt config failed");
             if (!silent)
             {
                 throw;
@@ -121,8 +126,11 @@ public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoT
     }
 
     /// <summary>
-    /// Расшифровать строку
+    /// Decrypt cipher text
     /// </summary>
+    /// <param name="alg">symmetric encrypt algorithm</param>
+    /// <param name="cipherText">string to decrypt</param>
+    /// <param name="silent">suppress exceptions</param>
     [return:NotNullIfNotNull(nameof(cipherText))]
     protected virtual string? DecryptInternal(SymmetricAlgorithm alg, string? cipherText, bool silent)
     {
@@ -144,7 +152,7 @@ public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoT
         }
         catch (Exception e)
         {
-            Logger?.LogWarning(e, "Decrypt config failed");
+            Logger.LogWarning(e, "Decrypt config failed");
             if (!silent)
             {
                 throw;
@@ -154,10 +162,9 @@ public abstract class BaseConfigurationCryptoTransformer : IConfigurationCryptoT
     }
 
     /// <summary>
-    /// Сгенерировать IV
+    /// Generate <see cref="SymmetricAlgorithm.IV"/>
     /// </summary>
-    /// <remarks>По умолчанию: <see cref="SymmetricAlgorithm.GenerateIV"/> </remarks>
-    // ReSharper disable once InconsistentNaming
+    /// <remarks>Default: <see cref="SymmetricAlgorithm.GenerateIV"/></remarks>
     protected virtual void GenerateIV(SymmetricAlgorithm alg)
     {
         alg.GenerateIV();

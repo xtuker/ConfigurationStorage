@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 
 /// <summary>
-/// Провайдер шифрования использующий алгоритм AES
+/// <see cref="IConfigurationCryptoTransformer"/> with AES algorithm
 /// </summary>
 internal sealed class AesConfigurationCryptoTransformer : BaseConfigurationCryptoTransformer
 {
@@ -17,7 +17,7 @@ internal sealed class AesConfigurationCryptoTransformer : BaseConfigurationCrypt
     /// <summary>
     /// .ctor
     /// </summary>
-    /// <param name="key">Ключ шифрования</param>
+    /// <param name="key">secret key</param>
     public AesConfigurationCryptoTransformer(ReadOnlySpan<byte> key)
     {
         if (key.Length == 32)

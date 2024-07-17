@@ -4,28 +4,32 @@ using System;
 using Microsoft.Extensions.Configuration;
 
 /// <summary>
-/// Расширение <see cref="IConfigurationBuilder"/>
+/// Extensions for <see cref="IConfigurationBuilder"/>
 /// </summary>
 public static class ConfigurationBuilderExtensions
 {
     /// <summary>
-    /// Добавить источник базы данных
+    /// Add configuration storage
     /// </summary>
-    public static IConfigurationBuilder AddStorage(this IConfigurationBuilder builder, Action<IConfiguration, ConfigurationStorageSource> configure)
+    public static IConfigurationBuilder AddStorage(this IConfigurationBuilder builder,
+        IConfigurationStorage storage,
+        Action<IConfiguration, ConfigurationStorageSource> configure)
     {
         var tmpConfig = builder.Build();
-            
-        var source = new ConfigurationStorageSource();
+
+        var source = new ConfigurationStorageSource(storage);
         configure(tmpConfig, source);
         return builder.Add(source);
     }
         
     /// <summary>
-    /// Добавить источник базы данных
+    /// Add configuration storage
     /// </summary>
-    public static IConfigurationBuilder AddStorage(this IConfigurationBuilder builder, Action<ConfigurationStorageSource> configure)
+    public static IConfigurationBuilder AddStorage(this IConfigurationBuilder builder,
+        IConfigurationStorage storage,
+        Action<ConfigurationStorageSource> configure)
     {
-        var source = new ConfigurationStorageSource();
+        var source = new ConfigurationStorageSource(storage);
         configure(source);
         return builder.Add(source);
     }

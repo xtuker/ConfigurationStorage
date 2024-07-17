@@ -8,17 +8,17 @@ using Microsoft.Extensions.Configuration;
 internal static class ConfigurationExtensions
 {
     /// <summary>
-    /// Получить экземпляр <see cref="ConfigurationStorageProvider"/>
+    /// Get <see cref="ConfigurationStorageProvider"/> instance
     /// </summary>
-    /// <exception cref="NotSupportedException">Провайдер не зарегистрирован</exception>
+    /// <exception cref="NotSupportedException">provider does not found</exception>
     public static ConfigurationStorageProvider GetConfigurationStorageProvider(this IConfiguration configuration)
     {
         return (configuration as IConfigurationRoot)?.Providers.OfType<ConfigurationStorageProvider>().LastOrDefault()
-            ?? throw new NotSupportedException($"{nameof(ConfigurationStorageProvider)} not found");
+            ?? throw new NotSupportedException($"{nameof(ConfigurationStorageProvider)} does not found");
     }
 
     /// <summary>
-    /// Получить все экземпляры <see cref="ConfigurationStorageProvider"/>
+    /// Get all <see cref="ConfigurationStorageProvider"/> instances
     /// </summary>
     public static IEnumerable<ConfigurationStorageProvider> GetConfigurationStorageProviders(this IConfiguration configuration)
     {

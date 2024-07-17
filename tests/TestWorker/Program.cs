@@ -16,13 +16,12 @@ IHost host = Host.CreateDefaultBuilder(args)
         .AddJsonFile("appsettings.user.json", true)
 
         // Custom Storage
-        .AddStorage(x =>
-        {
-            x.UseStorage(new MyConfigurationStorage(new MyCryptoTransformer()))
-                .UseLoggerFactory(loggerFactory)
-                .ReloadOnExpiry(120);
-
-        })
+        .AddStorage(new MyConfigurationStorage(new MyCryptoTransformer()),
+            x =>
+            {
+                x.UseLoggerFactory(loggerFactory)
+                    .ReloadOnExpiry(120);
+            })
         // Dapper Storage
         .AddDapperStorage(config => config.GetConnectionString("Pg")!,
             $@"SELECT ""{nameof(IConfigurationData.Key)}"", ""{nameof(IConfigurationData.Value)}"", ""{nameof(IConfigurationData.Encrypted)}"" FROM alr.db_config",

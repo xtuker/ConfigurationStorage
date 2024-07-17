@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 
 /// <summary>
-/// Хранилище данных конфигурации <see cref="IConfigurationProvider"/>
+/// <see cref="IConfigurationData"/> storage for <see cref="IConfigurationProvider"/>
 /// </summary>
 public interface IConfigurationStorage
 {
     /// <summary>
-    /// Получить набор данных из хранилища
+    /// Get configuration data
     /// </summary>
     IEnumerable<IConfigurationData> GetData();
 }

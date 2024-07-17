@@ -4,27 +4,18 @@ using System;
 using System.Threading;
 using Microsoft.Extensions.Primitives;
 
-/// <summary>
-/// Сервис обновления конфигурации по таймеру
-/// </summary>
-internal sealed class ConfigurationStorageChangeNotifier : IConfigurationStorageChangeNotifier
+/// <inheritdoc />
+internal sealed class ConfigurationStorageChangeNotificationService : IConfigurationStorageChangeNotificationService
 {
     private readonly Func<CancellationTokenSource> _factory;
     private volatile CancellationTokenSource? _cancellationTokenSource;
 
-    /// <summary>
-    /// .ctor
-    /// </summary>
-    public ConfigurationStorageChangeNotifier()
+    public ConfigurationStorageChangeNotificationService()
     {
         _factory = () => new CancellationTokenSource();
     }
 
-    /// <summary>
-    /// .ctor
-    /// </summary>
-    /// <param name="refreshInterval">Интервал изменений</param>
-    public ConfigurationStorageChangeNotifier(TimeSpan refreshInterval)
+    public ConfigurationStorageChangeNotificationService(TimeSpan refreshInterval)
     {
         _factory = () => new CancellationTokenSource(refreshInterval);
     }

@@ -10,9 +10,6 @@ internal class ConfigurationStorageReloader : IConfigurationStorageReloader
 {
     private readonly ICollection<ConfigurationStorageProvider> _storageProvider;
 
-    /// <summary>
-    /// .ctor
-    /// </summary>
     public ConfigurationStorageReloader(IConfiguration configuration)
     {
         _storageProvider = configuration.GetConfigurationStorageProviders().ToList();

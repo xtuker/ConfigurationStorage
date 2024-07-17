@@ -9,38 +9,40 @@ using Xtuker.ConfigurationStorage.Crypto;
 public class ConfigurationStorageSource : IConfigurationSource
 {
     /// <summary>
-    /// Ключ конфигурации для ключа шифрования
+    /// .ctor
+    /// </summary>
+    public ConfigurationStorageSource(IConfigurationStorage storage)
+    {
+        Storage = storage;
+    }
+
+    /// <summary>
+    /// Secret key for <see cref="IConfigurationCryptoTransformer"/>
     /// </summary>
     public const string CryptoTransformerKeyPath = "ConfigurationStorage:CryptoTransformer:Key";
 
-    /// <summary>
-    /// Источник данных
-    /// </summary>
-    public IConfigurationStorage Storage { get; internal set; } = null!;
+    /// <inheritdoc cref="IConfigurationStorage"/>
+    public IConfigurationStorage Storage { get; }
 
-    /// <summary>
-    /// Криптографический провайдер
-    /// </summary>
+    /// <inheritdoc cref="IConfigurationCryptoTransformer"/>
     public IConfigurationCryptoTransformer? CryptoTransformer { get; internal set; }
 
     /// <summary>
-    /// Сервис логирования
+    /// Logger instance
     /// </summary>
     public ILogger Logger { get; internal set; } = NullLogger.Instance;
 
-    /// <summary>
-    /// Сервис отслеживания изменений конфигурации
-    /// </summary>
-    public IConfigurationStorageChangeNotifier? ChangeNotifier { get; internal set; }
-
-    /// <summary>
-    /// Интервал перезагрузки конфигурации
-    /// </summary>
-    public int? ReloadInterval { get; internal set; }
+    /// <inheritdoc cref="IConfigurationStorageChangeNotificationService"/>
+    public IConfigurationStorageChangeNotificationService? ChangeNotifier { get; internal set; }
 
     /// <inheritdoc />
     public virtual IConfigurationProvider Build(IConfigurationBuilder builder)
     {
+        if (CryptoTransformer is BaseConfigurationCryptoTransformer baseConfigurationCryptoTransformer)
+        {
+            baseConfigurationCryptoTransformer.Logger = Logger;
+        }
+
         return new ConfigurationStorageProvider(this);
     }
 }

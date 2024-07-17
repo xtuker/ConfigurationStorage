@@ -25,11 +25,11 @@ public class InMemoryStorageTests
 
         Storage = storage;
         var configurationRoot = new ConfigurationBuilder()
-            .AddStorage(c =>
-            {
-                c.UseAesCryptoTransformer(key)
-                    .UseStorage(Storage);
-            })
+            .AddStorage(Storage,
+                c =>
+                {
+                    c.UseAesCryptoTransformer(key);
+                })
             .Build();
 
         var sv = new ServiceCollection();

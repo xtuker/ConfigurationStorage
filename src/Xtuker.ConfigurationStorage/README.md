@@ -9,13 +9,13 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(c => c
         .AddJsonFile("appsettings.user.json", true)
         // Custom Storage
-        .AddStorage(x =>
-        {
-            x.UseStorage(new MyConfigurationStorage(new MyCryptoTransformer()))
-                .UseLoggerFactory(loggerFactory)
-                .ReloadOnExpiry(120);
-
-        })
+        .AddStorage(new MyConfigurationStorage(new MyCryptoTransformer()),
+            c =>
+            {
+                c.UseAesCryptoTransformer(key)
+                    .UseLoggerFactory(loggerFactory)
+                    .ReloadOnExpiry(120);
+            })
     )
     .Build();
 

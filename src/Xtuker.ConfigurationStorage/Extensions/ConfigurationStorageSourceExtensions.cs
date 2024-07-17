@@ -6,40 +6,25 @@ using Microsoft.Extensions.Logging;
 using Xtuker.ConfigurationStorage.Crypto;
 
 /// <summary>
-/// Методы расширения <see cref="ConfigurationStorageSource"/>
+/// Extensions for <see cref="ConfigurationStorageSource"/>
 /// </summary>
 public static class ConfigurationStorageSourceExtensions
 {
     /// <summary>
-    /// Использовать сервис отслеживания изменений конфигурации
+    /// Use change notification service
     /// </summary>
-    public static T UseChangeNotifier<T>(this T source, IConfigurationStorageChangeNotifier storageChangeNotifier, int reloadInterval = 300)
+    /// <seealso cref="IConfigurationStorageChangeNotificationService"/>
+    public static T UseChangeNotificationService<T>(this T source, IConfigurationStorageChangeNotificationService storageChangeNotificationService)
         where T : ConfigurationStorageSource
     {
-        source.ChangeNotifier = storageChangeNotifier;
-        source.ReloadInterval = reloadInterval;
+        source.ChangeNotifier = storageChangeNotificationService;
 
         return source;
     }
 
     /// <summary>
-    /// Использовать хранилище данных
+    /// Use logger
     /// </summary>
-    /// <param name="source">Источник конфигурации</param>
-    /// <param name="storage">Криптографический провайдер</param>
-    public static T UseStorage<T>(this T source, IConfigurationStorage storage)
-        where T : ConfigurationStorageSource
-    {
-        source.Storage = storage;
-
-        return source;
-    }
-
-    /// <summary>
-    /// Использовать логгер
-    /// </summary>
-    /// <param name="source">Источник конфигурации</param>
-    /// <param name="logger">Сервис логирования</param>
     public static T UseLogger<T>(this T source, ILogger logger)
         where T : ConfigurationStorageSource
     {
@@ -49,10 +34,8 @@ public static class ConfigurationStorageSourceExtensions
     }
 
     /// <summary>
-    /// Использовать фабрику логгера
+    /// Use logger factory
     /// </summary>
-    /// <param name="source">Источник конфигурации</param>
-    /// <param name="loggerFactory">Фабрика создания сервиса логирования</param>
     public static T UseLoggerFactory<T>(this T source, ILoggerFactory loggerFactory)
         where T : ConfigurationStorageSource
     {
@@ -62,23 +45,23 @@ public static class ConfigurationStorageSourceExtensions
     }
 
     /// <summary>
-    /// Использовать автоматическое обновление данных по таймауту
+    /// Reload configuration on timeout
     /// </summary>
-    /// <param name="source">Источник конфигурации</param>
-    /// <param name="delaySeconds">Задержка перед обновлением данных</param>
+    /// <remarks>Default: 60 seconds</remarks>
+    /// <param name="source">configuration source</param>
+    /// <param name="delaySeconds">delay in seconds</param>
     public static T ReloadOnExpiry<T>(this T source, int delaySeconds = 60)
         where T : ConfigurationStorageSource
     {
-        source.UseChangeNotifier(new ConfigurationStorageChangeNotifier(TimeSpan.FromSeconds(delaySeconds)));
+        source.UseChangeNotificationService(new ConfigurationStorageChangeNotificationService(TimeSpan.FromSeconds(delaySeconds)));
 
         return source;
     }
 
     /// <summary>
-    /// Использовать криптографический провайдер
+    /// Use custom configuration crypto transformer
     /// </summary>
-    /// <param name="source">Источник конфигурации</param>
-    /// <param name="cryptoTransformer">Криптографический провайдер</param>
+    /// <seealso cref="IConfigurationCryptoTransformer"/>
     public static T UseCryptoTransformer<T>(this T source, IConfigurationCryptoTransformer cryptoTransformer)
         where T : ConfigurationStorageSource
     {
@@ -88,10 +71,11 @@ public static class ConfigurationStorageSourceExtensions
     }
 
     /// <summary>
-    /// Использовать <see cref="AesConfigurationCryptoTransformer"/>
+    /// Use AES configuration crypto transformer
     /// </summary>
-    /// <param name="source">Источник конфигурации</param>
-    /// <param name="key">ключ шифрования</param>
+    /// <param name="source">configuration source</param>
+    /// <param name="key">secret key</param>
+    /// <seealso cref="IConfigurationCryptoTransformer"/>
     public static T UseAesCryptoTransformer<T>(this T source, ReadOnlySpan<byte> key)
         where T : ConfigurationStorageSource
     {
@@ -99,18 +83,20 @@ public static class ConfigurationStorageSourceExtensions
     }
 
     /// <summary>
-    /// Использовать <see cref="AesConfigurationCryptoTransformer"/>
+    /// Use AES configuration crypto transformer
     /// <para>
-    /// Key: <see cref="ConfigurationStorageSource.CryptoTransformerKeyPath"/>
+    /// Using secret key from configuration <see cref="ConfigurationStorageSource.CryptoTransformerKeyPath"/>
     /// </para>
     /// </summary>
-    /// <param name="source">Источник конфигурации</param>
-    /// <param name="configurationSection">Секция конфигурации провайдера</param>
+    /// <param name="source">configuration source</param>
+    /// <param name="configurationSection">root configuration section with secret key</param>
+    /// <seealso cref="IConfigurationCryptoTransformer"/>
+    /// <exception cref="ArgumentNullException">secret key does not set</exception>
     public static T UseAesCryptoTransformer<T>(this T source, IConfiguration configurationSection)
         where T : ConfigurationStorageSource
     {
         var keyStr = configurationSection[ConfigurationStorageSource.CryptoTransformerKeyPath] ??
-            throw new ArgumentNullException(ConfigurationStorageSource.CryptoTransformerKeyPath, "Не найден ключ шифрования");
+            throw new ArgumentNullException(ConfigurationStorageSource.CryptoTransformerKeyPath, "secret key does not set");
         var key = Convert.FromBase64String(keyStr);
 
         return source.UseAesCryptoTransformer(key);

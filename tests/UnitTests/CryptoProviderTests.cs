@@ -13,7 +13,7 @@ public partial class Tests
     {
         var key = System.Security.Cryptography.RandomNumberGenerator.GetBytes(32);
 
-        var src = new ConfigurationStorageSource().UseAesCryptoTransformer(key);
+        var src = new ConfigurationStorageSource(null!).UseAesCryptoTransformer(key);
 
         CryptoTransformer = src.CryptoTransformer!;
     }
