@@ -44,7 +44,7 @@ public class InMemoryStorageWithNotificationTests
     public void ReloadTest()
     {
         var key = "Secret";
-        var value = "Secret value";
+        var value = "Very secret value";
 
         var notFoundConfig = Configuration[key];
         Assert.That(notFoundConfig, Is.Null.Or.Empty);
