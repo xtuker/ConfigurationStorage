@@ -20,16 +20,11 @@ jobs:
         id: extract_version
         run: echo "##[set-output name=VERSION;]${GITHUB_REF#refs/tags/v}"
 
-      - name: Update versions
-        run: |
-          VERSION=${{ steps.extract_version.outputs.VERSION }}
-          sed -i "s/<Version>.*<\/Version>/<Version>$VERSION<\/Version>/" src/Directory.Build.props
-
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore -p:ContinuousIntegrationBuild=true -p:Version="${{ steps.extract_version.outputs.VERSION }}"
 
       - name: Pack
         run: dotnet pack --configuration Release --no-build --output ./output
