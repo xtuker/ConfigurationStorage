@@ -3,7 +3,6 @@
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         
         <Version>1.0.0-preview.1</Version>

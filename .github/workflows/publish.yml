@@ -27,7 +27,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore -p:ContinuousIntegrationBuild=true -p:Version="${{ steps.extract_version.outputs.VERSION }}"
 
       - name: Pack
-        run: dotnet pack --configuration Release --no-build --output ./output
+        run: dotnet pack --configuration Release --no-build --output ./output -p:ContinuousIntegrationBuild=true -p:Version="${{ steps.extract_version.outputs.VERSION }}"
 
       - name: Publish to NuGet
         env:
