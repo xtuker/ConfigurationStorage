@@ -2,6 +2,16 @@
 
 ## Usage
 
+### Configure methods
+
+* UseLogger
+* UseLoggerFactory
+* UseChangeNotificationService
+* ReloadOnExpiry
+* UseCryptoTransformer
+* UseAesCryptoTransformer
+
+
 ```csharp
 var loggerFactory = Host.CreateDefaultBuilder(args).Build().Services.GetRequiredService<ILoggerFactory>();
 

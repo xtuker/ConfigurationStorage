@@ -23,30 +23,67 @@ IHost host = Host.CreateDefaultBuilder(args)
                     .ReloadOnExpiry(120);
             })
         // Dapper Storage
-        .AddDapperStorage(config => config.GetConnectionString("Pg")!,
-            $@"SELECT ""{nameof(IConfigurationData.Key)}"", ""{nameof(IConfigurationData.Value)}"", ""{nameof(IConfigurationData.Encrypted)}"" FROM alr.db_config",
+        .AddDapperStorage(
+            // connection string factory
+            config => config.GetConnectionString("Pg")!,
+            // get SQL query
+            $@"SELECT 
+                ""{nameof(IConfigurationData.Key)}"",
+                ""{nameof(IConfigurationData.Value)}"",
+                ""{nameof(IConfigurationData.Encrypted)}""
+              FROM db_config_schema.db_config_table",
+            // db connection factory
             connectionString => new NpgsqlConnection(connectionString),
-            (config, x) => x.UseAesCryptoTransformer(config).UseLoggerFactory(loggerFactory).ReloadOnExpiry())
+            // configure storage
+            (config, x) => x.UseAesCryptoTransformer(config)
+                .UseLoggerFactory(loggerFactory)
+                .ReloadOnExpiry()
+        )
 
-        .AddDapperStorage<MyConfigurationData>(config => config.GetConnectionString("Pg")!,
-            $@"SELECT ""{nameof(IConfigurationData.Key)}"", ""{nameof(IConfigurationData.Value)}"", ""{nameof(IConfigurationData.Encrypted)}"" FROM alr.db_config",
+        .AddDapperStorage<MyConfigurationData>(
+            // connection string factory
+            config => config.GetConnectionString("Pg")!,
+            // get SQL query
+            "SELECT * FROM db_config_schema.db_config_table",
+            // db connection factory
             connectionString => new NpgsqlConnection(connectionString),
-            (config, x) => x.UseAesCryptoTransformer(config).UseLoggerFactory(loggerFactory).ReloadOnExpiry())
+            // configure storage
+            (config, x) => x.UseAesCryptoTransformer(config)
+                .UseLoggerFactory(loggerFactory)
+                .ReloadOnExpiry()
+        )
 
-        // Ef Storage
+        // Ef Storage with internal DbContext
         .AddEfCoreStorage(
-            (config, x) => x.UseDbConfigurationTable("db_config", "alr", z => z.WithTableColumns("key", "value", "encrypted"))
+            // configure db context
+            (config, x) =>
+                x.UseDbConfigurationTable(
+                    "db_config_table",
+                    "db_config_schema",
+                    z => z.WithTableColumns("key", "value", "encrypted")
+                )
                 .UseNpgsql(config.GetConnectionString("Pg"))
                 .UseLoggerFactory(loggerFactory)
                 .EnableSensitiveDataLogging(),
-            (config, x) => x.UseAesCryptoTransformer(config).UseLoggerFactory(loggerFactory).ReloadOnExpiry())
+            // configure storage
+            (config, x) => x.UseAesCryptoTransformer(config)
+                .UseLoggerFactory(loggerFactory)
+                .ReloadOnExpiry()
+        )
 
-        // Ef Storage
-        .AddEfCoreStorage<MyDbContext, MyConfigurationData>(ops => new MyDbContext(ops.Options),
+        // Ef Storage with user DbContext implemented IConfigurationStorageDbContext<T>
+        .AddEfCoreStorage<MyDbContext, MyConfigurationData>(
+            // db context factory
+            ops => new MyDbContext(ops.Options),
+            // configure db context
             (config, x) => x.UseNpgsql(config.GetConnectionString("Pg"))
                 .UseLoggerFactory(loggerFactory)
                 .EnableSensitiveDataLogging(),
-            (config, x) => x.UseAesCryptoTransformer(config).UseLoggerFactory(loggerFactory).ReloadOnExpiry())
+            // configure storage
+            (config, x) => x.UseAesCryptoTransformer(config)
+                .UseLoggerFactory(loggerFactory)
+                .ReloadOnExpiry()
+        )
     )
     .ConfigureServices((ctx, services) =>
     {

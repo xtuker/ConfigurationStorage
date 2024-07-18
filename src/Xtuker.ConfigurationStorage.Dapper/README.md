@@ -8,27 +8,32 @@ var loggerFactory = Host.CreateDefaultBuilder(args).Build().Services.GetRequired
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(c => c
         .AddJsonFile("appsettings.user.json", true)
-        // Dapper Storage with internal model
+        // Dapper Storage
         .AddDapperStorage(
+            // connection string factory
             config => config.GetConnectionString("Pg")!,
-            // Dapper Storage
-            $@"SELECT
+            // get SQL query
+            $@"SELECT 
                 ""{nameof(IConfigurationData.Key)}"",
                 ""{nameof(IConfigurationData.Value)}"",
                 ""{nameof(IConfigurationData.Encrypted)}""
-              FROM config_table_name",
+              FROM db_config_schema.db_config_table",
+            // db connection factory
             connectionString => new NpgsqlConnection(connectionString),
+            // configure storage
             (config, x) => x.UseAesCryptoTransformer(config)
                 .UseLoggerFactory(loggerFactory)
                 .ReloadOnExpiry()
         )
-    
-        // Dapper Storage with user model
+
         .AddDapperStorage<MyConfigurationData>(
+            // connection string factory
             config => config.GetConnectionString("Pg")!,
-            // Dapper Storage
-            $@"SELECT * FROM config_table_name",
+            // get SQL query
+            "SELECT * FROM db_config_schema.db_config_table",
+            // db connection factory
             connectionString => new NpgsqlConnection(connectionString),
+            // configure storage
             (config, x) => x.UseAesCryptoTransformer(config)
                 .UseLoggerFactory(loggerFactory)
                 .ReloadOnExpiry()
@@ -37,10 +42,9 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((ctx, services) =>
     {
         // optional register services if used
-        // IConfigurationStorage,
-        // IConfigurationStorage<TConfig>,
+        // IConfigurationStorageReloader,
+        // IConfigurationStorageChangeNotificationService,
         // IConfigurationCryptoTransformer,
-        // IConfigurationStorageReloader
         services.AddConfigurationStorageInfrastructure(ctx.Configuration);
     })
     .Build();

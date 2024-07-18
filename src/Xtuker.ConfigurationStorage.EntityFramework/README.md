@@ -10,26 +10,31 @@ IHost host = Host.CreateDefaultBuilder(args)
         .AddJsonFile("appsettings.user.json", true)
         // Ef Storage with internal DbContext
         .AddEfCoreStorage(
-            // DbContext configuration
-            (config, x) => x.UseDbConfigurationTable("db_config", "alr", z => z.WithTableColumns("key", "value", "encrypted"))
+            // configure db context
+            (config, x) => 
+                x.UseDbConfigurationTable(
+                    "db_config_table",
+                    "db_config_schema",
+                    z => z.WithTableColumns("key", "value", "encrypted")
+                )
                 .UseNpgsql(config.GetConnectionString("Pg"))
                 .UseLoggerFactory(loggerFactory)
                 .EnableSensitiveDataLogging(),
-            // ConfigurationStorage configuration
+            // configure storage
             (config, x) => x.UseAesCryptoTransformer(config)
                 .UseLoggerFactory(loggerFactory)
                 .ReloadOnExpiry()
         )
-        // or
-        // Ef Storage with user DbContext
+
+        // Ef Storage with user DbContext implemented IConfigurationStorageDbContext<T>
         .AddEfCoreStorage<MyDbContext, MyConfigurationData>(
-            // DbContext factory
+            // db context factory
             ops => new MyDbContext(ops.Options),
-            // DbContext configuration
+            // configure db context
             (config, x) => x.UseNpgsql(config.GetConnectionString("Pg"))
                 .UseLoggerFactory(loggerFactory)
                 .EnableSensitiveDataLogging(),
-            // ConfigurationStorage configuration
+            // configure storage
             (config, x) => x.UseAesCryptoTransformer(config)
                 .UseLoggerFactory(loggerFactory)
                 .ReloadOnExpiry()
@@ -38,10 +43,9 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((ctx, services) =>
     {
         // optional register services if used
-        // IConfigurationStorage,
-        // IConfigurationStorage<TConfig>,
+        // IConfigurationStorageReloader,
+        // IConfigurationStorageChangeNotificationService,
         // IConfigurationCryptoTransformer,
-        // IConfigurationStorageReloader
         services.AddConfigurationStorageInfrastructure(ctx.Configuration);
     })
     .Build();
