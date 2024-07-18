@@ -23,7 +23,7 @@ jobs:
       - name: Update versions
         run: |
           VERSION=${{ steps.extract_version.outputs.VERSION }}
-          sed -i "s/<Version>.*<\/Version>/<Version>$VERSION<\/Version>/" /src/Directory.Build.props
+          sed -i "s/<Version>.*<\/Version>/<Version>$VERSION<\/Version>/" src/Directory.Build.props
 
       - name: Restore dependencies
         run: dotnet restore
