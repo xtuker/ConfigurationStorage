@@ -18,6 +18,7 @@
         <Copyright>Copyright $([System.DateTime]::Today.ToString(yyyy)) © Alexander Falkovsky</Copyright>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
 
