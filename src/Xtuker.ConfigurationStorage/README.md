@@ -1,4 +1,4 @@
-﻿# ConfigurationStorage - the .NET database configuration provider
+﻿# ConfigurationStorage - the .NET configuration provider from database
 
 ## Usage
 

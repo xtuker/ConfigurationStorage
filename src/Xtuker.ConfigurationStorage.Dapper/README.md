@@ -1,4 +1,4 @@
-﻿## ConfigurationStorage.Dapper - the .NET database configuration provider via Dapper
+﻿## ConfigurationStorage.Dapper - the .NET configuration provider from database via Dapper
 
 ## Usage
 

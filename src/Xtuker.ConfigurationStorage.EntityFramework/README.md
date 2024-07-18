@@ -1,4 +1,4 @@
-﻿## ConfigurationStorage.EntityFramework - the .NET database configuration provider via Entity Framework Core
+﻿## ConfigurationStorage.EntityFramework - the .NET configuration provider from database via Entity Framework Core
 
 ## Usage
 
