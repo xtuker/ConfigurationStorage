@@ -34,6 +34,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{C9EE73F0-AA94-4202-907E-D70819A94118}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		.github\publish.yml = .github\publish.yml
 	EndProjectSection
 EndProject
 Global
