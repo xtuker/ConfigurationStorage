@@ -4,31 +4,36 @@ on:
   release:
     types: [published]
 
+env:
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    DOTNET_NOLOGO: true
+    NuGetDirectory: ${{ github.workspace}}/nuget
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
             dotnet-version: 8.0.x
 
       - name: Extract version from tag
         id: extract_version
-        run: echo "##[set-output name=VERSION;]${GITHUB_REF#refs/tags/v}"
+        run: echo "PACK_VERSION=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_ENV"
 
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore -p:ContinuousIntegrationBuild=true -p:Deterministic=true -p:Version="${{ steps.extract_version.outputs.VERSION }}"
+        run: dotnet build --configuration Release --no-restore -p:Version="$PACK_VERSION"
 
       - name: Pack
-        run: dotnet pack --configuration Release --no-build --output ./output -p:ContinuousIntegrationBuild=true -p:Deterministic=true -p:Version="${{ steps.extract_version.outputs.VERSION }}"
+        run: dotnet pack --configuration Release --no-build --output ${{ env.NuGetDirectory }} -p:Version="$PACK_VERSION"
 
       - name: Publish to NuGet
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-        run: dotnet nuget push ./output/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push "${{ env.NuGetDirectory }}/*.nupkg" --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
